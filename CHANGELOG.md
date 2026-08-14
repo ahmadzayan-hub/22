@@ -1,5 +1,27 @@
 # Changelog
 
+## 2026-08-14 — M3: agent runtime
+- **Vault loader** (`runtime/vault.ts`): parses AGENT CONTRACT frontmatter +
+  sections, syncs identities → `agents` (vault owns identity fields, DB keeps
+  runtime status so approvals survive re-sync). `POST /agents/sync`.
+- **Runner** (`runtime/runner.ts`): identity + top-k pgvector context → local
+  LLM (JSON plan) → tasks/approvals → output markdown to
+  `crews/<crew>/notes/` → `agent_runs` row (success/fail powers run-success %).
+  Disabled agents only run with `trigger=shadow`.
+- **Scheduler** (`runtime/scheduler.ts`): BullMQ repeatable job per
+  `schedule_cron` + the 07:00 Conductor standup; Redis down degrades
+  gracefully instead of killing the API.
+- **tmux crews** (`runtime/tmux.ts`): one `os-<crew>` session per crew;
+  list/ensure/restart; tmux added to the api image.
+- **Conductor** (`runtime/conductor.ts`): daily standup (failures, stalled
+  deals, overdue tasks, comms unread>24h → ≤3 tasks/crew + 10-line banner into
+  `kpi_daily`, standup note in `notes/standups/`), operator chat, `broadcast`,
+  `openclaw` (ad-hoc shadow sub-agent, one immediate run, never live without
+  approval). Deterministic fallbacks when the local LLM is unreachable.
+- Routes: `/api/v1/agents/*`, `/api/v1/conductor/*` (chat, broadcast, spawn,
+  standup, tmux, runs). Enable-to-live gated on an `agent_enable` approval.
+- Whole API typechecks clean under strict TS; `scripts/smoke/m3.sh` is the gate.
+
 ## 2026-08-14 — Design system + M1/M2 integration
 - **Design:** 10 hi-fi mockups as real HTML/SVG (`design/mockups/`), rendered to
   3360×1890 PNGs: G-Brain, Org Chart, Dashboard, Sales sub-graph, Comms, Funnel,

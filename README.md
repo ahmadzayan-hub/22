@@ -48,7 +48,7 @@ open http://localhost:3000/g-brain
 |---|---|---|
 | M1 | Skeleton: monorepo, docker, operator auth, nav shell, theme | **code in repo** — run compose gate locally |
 | M2 | G-Brain: ingest → md → chunk → embed pipeline, graph API, radial view | **code in repo** — run smoke gate locally |
-| M3 | Runtime: vault loader, scheduler, run log, tmux crews, Conductor loop | next |
+| M3 | Runtime: vault loader, scheduler, run log, tmux crews, Conductor loop | **code in repo** — `bash scripts/smoke/m3.sh` |
 | M4 | Crews + MCP connector modules w/ health probes | vault + registry seeded; probes pending |
 | M5 | Dashboard / funnel / task board APIs + UI | mockups final; APIs pending |
 | M6 | Hardening: alerts, nightly self-report, backups, docs | pending |
