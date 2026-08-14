@@ -1,0 +1,132 @@
+<!doctype html><html><head><meta charset="utf-8"><title>SALES — DEPT VIEW</title>
+<link rel="stylesheet" href="base.css">
+<style>
+.nav{position:absolute;top:70px;left:34px;z-index:12;display:flex;gap:9px;align-items:center}
+.nav .sq{border:1px solid var(--line2);background:rgba(8,13,15,.85);padding:7px 11px;font-size:11px;color:var(--dim)}
+.nav .cur{border:1px solid rgba(255,122,47,.65);background:rgba(255,122,47,.08);padding:7px 13px;
+  font-size:11.5px;font-weight:800;letter-spacing:.16em;color:var(--sales);box-shadow:0 0 16px rgba(255,122,47,.2)}
+.nav .cur i{font-style:normal;color:var(--dim);margin-left:9px;font-weight:400}
+.meta{position:absolute;top:70px;right:34px;z-index:12;text-align:right;font-size:10px;color:var(--dim);letter-spacing:.14em;line-height:2}
+.meta b{color:var(--ink)}
+#gwrap{position:absolute;inset:0;z-index:6}
+.runstrip{position:absolute;left:34px;right:34px;bottom:26px;z-index:12;display:flex;align-items:center;gap:22px;
+  border:1px solid var(--line);background:rgba(8,13,15,.85);padding:9px 16px;font-size:9.5px;color:var(--dim);letter-spacing:.08em}
+.runstrip b{color:var(--ink);font-weight:700}
+.runstrip .ok{color:var(--ok)}
+.runstrip .lg{margin-left:auto;display:flex;gap:16px;align-items:center}
+.runstrip .li{display:flex;gap:7px;align-items:center}
+</style></head><body>
+<div class="stage">
+  <div class="gridbg"></div>
+  <div class="topbar">
+    <span class="crumb">// G-BRAIN › DEPT EXPANSION</span><span class="spacer"></span>
+    <span class="syschip"><span class="led"></span>CREW: SALES · TMUX 1/1</span>
+    <span class="syschip" style="color:var(--ink)">ALKAHTANI OS · S1.2</span>
+  </div>
+  <div class="nav">
+    <span class="sq">‹</span><span class="sq">›</span>
+    <span class="cur">SALES<i>✕</i></span>
+    <span class="sq">BACK ↩</span>
+  </div>
+  <div class="meta"><b>DEPT VIEW</b> — 5 TOOLS · 6 AGENTS · 3 NOTES<br>run success <b class="mono-num" style="color:var(--ok)">100%</b> · window 7d</div>
+  <div id="gwrap"><svg id="g" width="1680" height="945"></svg></div>
+  <div class="runstrip">
+    <span>LAST RUNS:</span>
+    <span><b>sales-agent</b> <span class="ok">✓</span> 12m ago</span>
+    <span><b>attio-crm</b> <span class="ok">✓</span> 41m ago</span>
+    <span><b>vantage-cohort</b> <span class="ok">✓</span> 1h ago</span>
+    <span>NEXT: <b>nexo-cohort</b> in 18m · shadow run 2/3</span>
+    <span class="lg">
+      <span class="li"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--tool);box-shadow:0 0 8px var(--tool)"></span>TOOL</span>
+      <span class="li"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--agent)"></span>AGENT</span>
+      <span class="li"><span class="dot" style="width:8px;height:8px;border-radius:50%;border:1px dashed var(--note);background:transparent"></span>NOTE</span>
+    </span>
+  </div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div class="scan"></div><div class="vig"></div>
+</div>
+<script src="ui.js"></script>
+<script>
+const svg=document.getElementById('g');
+svgEl('defs',{},svg).innerHTML=`
+ <filter id="glow" x="-70%" y="-70%" width="240%" height="240%">
+   <feGaussianBlur stdDeviation="5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+ <filter id="soft" x="-70%" y="-70%" width="240%" height="240%">
+   <feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
+const gE=svgEl('g',{},svg), gN=svgEl('g',{},svg);
+const F='JetBrains Mono';
+function line(a,b,stroke,w,dash,op){svgEl('path',{d:`M${a[0]},${a[1]} C${a[0]},${(a[1]+b[1])/2} ${b[0]},${(a[1]+b[1])/2} ${b[0]},${b[1]}`,
+  stroke,'stroke-width':w,fill:'none','stroke-dasharray':dash||'none',opacity:op??1},gE);}
+function label(g,lines,size,fill,dy=0){lines.forEach((t,i)=>{
+  svgEl('text',{x:0,y:dy+(i-(lines.length-1)/2)*(size+2),'text-anchor':'middle','dominant-baseline':'middle',
+   'font-size':size,'font-weight':700,fill,'font-family':F,'letter-spacing':'.03em'},g).textContent=t;});}
+// positions
+const TOOLS=[['Attio',470],['FanBasis',650],['GoHighLevel',830],['PAVA',1010],['Stripe',1190]].map(([n,x])=>({n,x,y:198}));
+const AGENTS=[['Attio CRM',400],['Sales Agent',568],['Stripe Vantage',736],['FanBasis Launchpad',904],['Nexo Launchpad Cohort',1078,true],['Vantage Cohort',1252]]
+  .map(([n,x,hl])=>({n,x,y:452,hl}));
+const HUB={x:830,y:672}, NOTESC={x:830,y:822};
+// tool -> agent wiring
+const WIRE=[[0,0],[0,1],[1,3],[2,1],[2,4],[3,3],[3,4],[4,2],[4,5]];
+WIRE.forEach(([t,a])=>line([TOOLS[t].x,TOOLS[t].y+46],[AGENTS[a].x,AGENTS[a].y-42],'rgba(255,90,80,.5)',1.2,null,.75));
+// agents -> hub
+AGENTS.forEach(a=>line([a.x,a.y+42],[HUB.x,HUB.y-50],'rgba(238,244,242,.6)',1,null,.5));
+// hub -> notes core
+line([HUB.x,HUB.y+50],[NOTESC.x,NOTESC.y-44],'#ff3b3b',1.6,null,.6);
+// dashed note edges
+const NOTES=[['Keep Attio clean',560,568,[0,1]],['Move sales-call roster',830,575,[1,2]],['Run discovery & close the vantage lane',1105,568,[4,5]]];
+NOTES.forEach(([t,x,y,links])=>{
+  links.forEach(ai=>line([AGENTS[ai].x,AGENTS[ai].y+40],[x,y-14],'#ffd23f',1,'3 5',.65));
+  line([x,y+14],[HUB.x,HUB.y-52],'#ffd23f',1,'3 5',.5);
+  const w=t.length*6.4+26;
+  const g=svgEl('g',{transform:`translate(${x},${y})`},gN);
+  svgEl('rect',{x:-w/2,y:-13,width:w,height:26,fill:'rgba(10,14,12,.92)',stroke:'#ffd23f','stroke-width':1,'stroke-dasharray':'4 4'},g);
+  svgEl('circle',{cx:-w/2+12,cy:0,r:3,fill:'#ffd23f'},g);
+  svgEl('text',{x:8,y:1,'text-anchor':'middle','dominant-baseline':'middle','font-size':9.5,fill:'#ffe9a8','font-family':F,'letter-spacing':'.03em'},g).textContent=t;
+});
+// side clusters
+function cluster(cx,cy,c,name,anchor){
+  const pts=[[0,0],[-52,54],[38,62],[-14,116]];
+  pts.slice(1).forEach(p=>svgEl('line',{x1:cx,y1:cy,x2:cx+p[0],y2:cy+p[1],stroke:c,'stroke-width':.8,opacity:.3},gE));
+  pts.forEach((p,i)=>svgEl('circle',{cx:cx+p[0],cy:cy+p[1],r:i?11:17,fill:'rgba(5,8,10,.9)',stroke:c,'stroke-width':1.4,opacity:.55,filter:'url(#soft)'},gN));
+  svgEl('text',{x:cx,y:cy+150,'text-anchor':anchor,'font-size':12,'font-weight':700,fill:c,opacity:.75,'font-family':F,'letter-spacing':'.06em'},gN).textContent=name;
+}
+cluster(130,430,'#3f8cff','Communications','start');
+cluster(1560,410,'#2ee06e','Finances','end');
+line([172,470],[AGENTS[0].x-40,AGENTS[0].y],'rgba(63,140,255,.5)',.8,'2 6',.4);
+line([1512,450],[AGENTS[5].x+40,AGENTS[5].y],'rgba(46,224,110,.5)',.8,'2 6',.4);
+// tools
+TOOLS.forEach(t=>{
+  const g=svgEl('g',{transform:`translate(${t.x},${t.y})`},gN);
+  svgEl('circle',{r:46,fill:'#2e0c0e',stroke:'#ff4545','stroke-width':2.2,filter:'url(#glow)'},g);
+  svgEl('circle',{r:36,fill:'none',stroke:'#ff4545','stroke-width':.6,opacity:.5},g);
+  label(g,[t.n],11.5,'#ffd9d4');
+  svgEl('text',{x:0,y:22,'text-anchor':'middle','font-size':7.5,fill:'rgba(255,150,140,.65)','font-family':F,'letter-spacing':'.14em'},g).textContent='TOOL';
+});
+// agents
+AGENTS.forEach(a=>{
+  const g=svgEl('g',{transform:`translate(${a.x},${a.y})`},gN);
+  if(a.hl){
+    svgEl('circle',{r:40,fill:'#ffd23f',stroke:'#ffe9a8','stroke-width':2,filter:'url(#glow)'},g);
+    label(g,a.n.split(' ').length>2?['Nexo','Launchpad','Cohort']:[a.n],9.5,'#231a02',0);
+    svgEl('text',{x:0,y:56,'text-anchor':'middle','font-size':8,fill:'#ffd23f','font-family':F,'letter-spacing':'.14em'},g).textContent='SHADOW TEST 2/3';
+  } else {
+    svgEl('circle',{r:38,fill:'#edf3f1',filter:'url(#soft)'},g);
+    svgEl('circle',{cx:0,cy:-20,r:4,fill:'#20302b'},g);
+    svgEl('path',{d:'M-7,-9 a7,6.5 0 0 1 14,0 z',fill:'#20302b'},g);
+    const parts=a.n.length>13?a.n.split(' '):[a.n];
+    label(g,parts,9.5,'#0c1413',7);
+  }
+});
+// hub + notes core
+{
+  const g=svgEl('g',{transform:`translate(${HUB.x},${HUB.y})`},gN);
+  svgEl('circle',{r:50,fill:'#ff7a2f',filter:'url(#glow)'},g);
+  svgEl('circle',{r:50,fill:'none',stroke:'#ffc39a','stroke-width':1.2,opacity:.7},g);
+  label(g,['Sales'],14,'#241002');
+  svgEl('text',{x:0,y:20,'text-anchor':'middle','font-size':7.5,fill:'rgba(36,16,2,.7)','font-family':F,'letter-spacing':'.16em'},g).textContent='DEPT HUB';
+  const n=svgEl('g',{transform:`translate(${NOTESC.x},${NOTESC.y})`},gN);
+  svgEl('circle',{r:42,fill:'#a81626',filter:'url(#glow)'},n);
+  label(n,['Notes'],13,'#ffe3e3');
+}
+</script>
+</body></html>

@@ -1,156 +1,174 @@
--- ============================================================
--- ZAYAN OS — Agentic Operating System schema
--- Postgres 16 + pgvector
--- Applied by: apps/server/src/db/migrate.ts (idempotent)
--- ============================================================
+-- =====================================================================
+-- ALKAHTANI OS · core schema · gate: psql -f schema.sql succeeds
+-- Embedding dim 1024 (bge-m3). Change vector dims if model differs.
+-- (v3 — Operator deliverable A, applied with syntax fixes: `uuid pk`
+--  → `uuid primary key`; dept colors aligned to the validated design
+--  tokens so hubs never collide with tool-red / note-yellow in S1.)
+-- =====================================================================
+create extension if not exists vector;
+create extension if not exists pgcrypto;
 
-CREATE EXTENSION IF NOT EXISTS vector;
-CREATE EXTENSION IF NOT EXISTS pgcrypto;
+-- ---------------- enums ----------------
+create type node_type      as enum ('dept','agent','tool','note','doc');
+create type edge_kind      as enum ('belongs_to','uses','references','reports_to','feeds');
+create type agent_status   as enum ('disabled','shadow','live','degraded');
+create type task_state     as enum ('open','doing','done','blocked');
+create type channel        as enum ('gmail','whatsapp','slack');
+create type conn_status    as enum ('live','degraded','offline');
+create type approval_kind  as enum ('agent_enable','rule_change','destructive_action','reply_send');
+create type approval_state as enum ('pending','approved','rejected');
+create type journey_stage  as enum ('first_touch','engaged','nurtured','opted_in','converted');
+create type triage_state   as enum ('auto','needs_approval','approved','edited','sent');
 
--- ------------------------------------------------------------
--- Graph: everything G-BRAIN renders is a node or an edge.
--- node id convention: "<type>:<slug>" e.g. "dept:sales",
--- "agent:attio-crm", "tool:stripe", "note:2026-08-13-standup"
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS nodes (
-  id         text PRIMARY KEY,
-  type       text NOT NULL CHECK (type IN ('dept','agent','tool','note','doc','hub')),
-  label      text NOT NULL,
-  color      text NOT NULL DEFAULT '#e5e5e5',
-  meta       jsonb NOT NULL DEFAULT '{}'::jsonb,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
-CREATE INDEX IF NOT EXISTS nodes_type_idx ON nodes(type);
+-- ---------------- org ----------------
+create table operators (
+  id uuid primary key default gen_random_uuid(),
+  name text not null, handle text unique not null,
+  auth_secret text not null, created_at timestamptz default now());
 
-CREATE TABLE IF NOT EXISTS edges (
-  src  text NOT NULL REFERENCES nodes(id) ON DELETE CASCADE,
-  dst  text NOT NULL REFERENCES nodes(id) ON DELETE CASCADE,
-  kind text NOT NULL DEFAULT 'link',          -- link|member|uses|mentions|derived
-  PRIMARY KEY (src, dst, kind)
-);
-CREATE INDEX IF NOT EXISTS edges_dst_idx ON edges(dst);
+create table departments (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null, label text not null,
+  color text not null, icon text, sort int default 0);
 
--- ------------------------------------------------------------
--- Agents: DB row mirrors the vault identity file (source of
--- truth is vault/agents/<crew>/<id>.md; loader syncs on boot).
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS agents (
-  id            text PRIMARY KEY,             -- slug, matches identity frontmatter
-  crew          text NOT NULL CHECK (crew IN
-                  ('sales','finances','clients','marketing','tech','comms','conductor')),
-  role          text NOT NULL,                -- one-line role shown on org card
-  model         text NOT NULL,                -- e.g. qwen3-hermes
-  schedule_cron text,                         -- NULL = on-demand only
-  tools         text[] NOT NULL DEFAULT '{}',
-  identity_path text NOT NULL,                -- vault-relative path to .md identity
-  status        text NOT NULL DEFAULT 'disabled'
-                  CHECK (status IN ('enabled','disabled','shadow')),
-  created_at    timestamptz NOT NULL DEFAULT now(),
-  updated_at    timestamptz NOT NULL DEFAULT now()
-);
-CREATE INDEX IF NOT EXISTS agents_crew_idx ON agents(crew);
+-- ---------------- G-BRAIN graph ----------------
+create table nodes (
+  id uuid primary key default gen_random_uuid(),
+  type node_type not null, label text not null,
+  color text, dept_id uuid references departments(id),
+  meta jsonb default '{}', created_at timestamptz default now(),
+  updated_at timestamptz default now());
 
--- Every execution, scheduled or ad-hoc; powers "run success %".
-CREATE TABLE IF NOT EXISTS runs (
-  id        uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  agent_id  text NOT NULL REFERENCES agents(id) ON DELETE CASCADE,
-  started   timestamptz NOT NULL DEFAULT now(),
-  finished  timestamptz,
-  success   boolean,                          -- NULL while running
-  output_md text,
-  error     text,
-  trigger   text NOT NULL DEFAULT 'schedule'  -- schedule|conductor|operator|shadow
-);
-CREATE INDEX IF NOT EXISTS runs_agent_started_idx ON runs(agent_id, started DESC);
-CREATE INDEX IF NOT EXISTS runs_started_idx ON runs(started DESC);
+create table edges (
+  id uuid primary key default gen_random_uuid(),
+  src uuid not null references nodes(id) on delete cascade,
+  dst uuid not null references nodes(id) on delete cascade,
+  kind edge_kind not null, weight real default 1,
+  meta jsonb default '{}', unique (src,dst,kind));
 
--- ------------------------------------------------------------
--- Work & business state
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS tasks (
-  id         uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  title      text NOT NULL,
-  crew       text NOT NULL,
-  state      text NOT NULL DEFAULT 'open' CHECK (state IN ('open','doing','done')),
-  assignee   text REFERENCES agents(id) ON DELETE SET NULL,
-  kind       text NOT NULL DEFAULT 'work',    -- work|approval  (approval = Operator gate)
-  meta       jsonb NOT NULL DEFAULT '{}'::jsonb,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  updated_at timestamptz NOT NULL DEFAULT now(),
-  due_at     timestamptz
-);
-CREATE INDEX IF NOT EXISTS tasks_state_idx ON tasks(state);
-CREATE INDEX IF NOT EXISTS tasks_crew_idx  ON tasks(crew);
+create table note_bodies (           -- markdown vault mirror (git is source of truth)
+  id uuid primary key default gen_random_uuid(),
+  node_id uuid not null references nodes(id) on delete cascade,
+  vault_path text not null, body_md text not null,
+  frontmatter jsonb default '{}',
+  source_type text check (source_type in ('text','voice','upload','agent')),
+  created_by text, created_at timestamptz default now());
 
-CREATE TABLE IF NOT EXISTS deals (
-  id         text PRIMARY KEY,                -- CRM id or local slug
-  name       text NOT NULL DEFAULT '',
-  stage      text NOT NULL CHECK (stage IN
-               ('open','qualified','proposal','won','lost')),
-  value      numeric(14,2) NOT NULL DEFAULT 0,
-  stalled    boolean NOT NULL DEFAULT false,
-  closed_at  timestamptz,
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
-CREATE INDEX IF NOT EXISTS deals_stage_idx ON deals(stage);
+create table embeddings (
+  id uuid primary key default gen_random_uuid(),
+  note_id uuid not null references note_bodies(id) on delete cascade,
+  chunk_idx int not null, chunk_text text not null,
+  embedding vector(1024) not null);
 
--- One row per contact moving through the funnel.
-CREATE TABLE IF NOT EXISTS journeys (
-  id         text PRIMARY KEY,
-  stage      text NOT NULL CHECK (stage IN
-               ('first_touch','engaged','nurtured','opted_in','converted')),
-  updated_at timestamptz NOT NULL DEFAULT now()
-);
-CREATE INDEX IF NOT EXISTS journeys_stage_idx ON journeys(stage);
+-- ---------------- agents & runtime ----------------
+create table agents (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null, name text not null,
+  dept_id uuid references departments(id),
+  role text, model text not null default 'qwen3.6-hermes-local',
+  identity_path text not null,          -- /vault/agents/<slug>.md
+  schedule_cron text, tools text[] default '{}', permissions text[] default '{}',
+  status agent_status default 'disabled', version int default 1,
+  created_at timestamptz default now());
 
-CREATE TABLE IF NOT EXISTS messages (
-  id          text PRIMARY KEY,               -- provider message id
-  channel     text NOT NULL CHECK (channel IN ('gmail','whatsapp','slack')),
-  direction   text NOT NULL CHECK (direction IN ('in','out')),
-  summary     text NOT NULL,
-  handled_by  text REFERENCES agents(id) ON DELETE SET NULL,
-  received_at timestamptz NOT NULL DEFAULT now(),
-  handled_at  timestamptz                     -- NULL = unread; powers "unread > 24h"
-);
-CREATE INDEX IF NOT EXISTS messages_unhandled_idx
-  ON messages(received_at) WHERE handled_at IS NULL;
+create table agent_runs (
+  id uuid primary key default gen_random_uuid(),
+  agent_id uuid not null references agents(id) on delete cascade,
+  trace_id uuid, started_at timestamptz default now(), finished_at timestamptz,
+  success boolean, error text,
+  context jsonb default '{}', output_md text,
+  tokens_in int default 0, tokens_out int default 0, cost_usd numeric(8,4) default 0);
 
--- Nightly KPI snapshot written by the Conductor self-report.
-CREATE TABLE IF NOT EXISTS kpi_daily (
-  date     date PRIMARY KEY,
-  snapshot jsonb NOT NULL
-);
+-- ---------------- work management ----------------
+create table tasks (
+  id uuid primary key default gen_random_uuid(),
+  title text not null, body text,
+  dept_id uuid references departments(id),
+  state task_state default 'open', priority int default 2,
+  assignee uuid references agents(id), created_by text,
+  due_at timestamptz, completed_at timestamptz);
 
--- ------------------------------------------------------------
--- G-BRAIN embeddings: notes/docs are chunked and embedded.
--- Dim 768 matches nomic-embed-text (EMBED_DIM env must agree).
--- ------------------------------------------------------------
-CREATE TABLE IF NOT EXISTS chunks (
-  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  node_id     text NOT NULL REFERENCES nodes(id) ON DELETE CASCADE,
-  chunk_index int  NOT NULL,
-  content     text NOT NULL,
-  embedding   vector(768),
-  UNIQUE (node_id, chunk_index)
-);
-CREATE INDEX IF NOT EXISTS chunks_embedding_idx
-  ON chunks USING hnsw (embedding vector_cosine_ops);
+create table deals (
+  id uuid primary key default gen_random_uuid(),
+  title text not null, value_usd numeric(10,2), stage text,
+  stalled boolean default false, owner uuid references agents(id),
+  meta jsonb default '{}', updated_at timestamptz default now());
 
--- ------------------------------------------------------------
--- updated_at maintenance
--- ------------------------------------------------------------
-CREATE OR REPLACE FUNCTION touch_updated_at() RETURNS trigger AS $$
-BEGIN NEW.updated_at = now(); RETURN NEW; END;
-$$ LANGUAGE plpgsql;
+create table journeys (
+  id uuid primary key default gen_random_uuid(),
+  contact text, campaign text,
+  stage journey_stage default 'first_touch',
+  entered_at timestamptz default now(), converted_at timestamptz);
 
-DO $$
-DECLARE t text;
-BEGIN
-  FOREACH t IN ARRAY ARRAY['nodes','agents','tasks','deals','journeys'] LOOP
-    EXECUTE format(
-      'DROP TRIGGER IF EXISTS %I_touch ON %I;
-       CREATE TRIGGER %I_touch BEFORE UPDATE ON %I
-       FOR EACH ROW EXECUTE FUNCTION touch_updated_at();', t, t, t, t);
-  END LOOP;
-END $$;
+-- ---------------- comms ----------------
+create table messages (
+  id uuid primary key default gen_random_uuid(),
+  channel channel not null, external_id text,
+  direction text check (direction in ('in','out')) default 'in',
+  counterpart text, subject text, body text,
+  summary text, draft_reply text,
+  handled_by uuid references agents(id),
+  triage triage_state default 'auto',
+  received_at timestamptz default now(), sent_at timestamptz);
+
+-- ---------------- system ----------------
+create table connectors (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null, name text not null, kind text default 'mcp',
+  status conn_status default 'offline',
+  latency_ms int, last_sync_at timestamptz, env_key_ref text,
+  health jsonb default '{}');
+
+create table workflows (
+  id uuid primary key default gen_random_uuid(),
+  name text not null, definition jsonb not null,   -- {triggers[],agents[],actions[],edges[]}
+  enabled boolean default true, created_at timestamptz default now());
+
+create table workflow_runs (
+  id uuid primary key default gen_random_uuid(),
+  workflow_id uuid references workflows(id) on delete cascade,
+  started_at timestamptz default now(), finished_at timestamptz,
+  success boolean, log jsonb default '[]');
+
+create table personas (
+  id uuid primary key default gen_random_uuid(),
+  name text not null, model text default 'qwen3.6-hermes-local',
+  tone text[] default '{}', channels text[] default '{}',
+  enabled boolean default false, prompt_md text);
+
+create table approvals (
+  id uuid primary key default gen_random_uuid(),
+  kind approval_kind not null, requested_by uuid references agents(id),
+  payload jsonb not null, state approval_state default 'pending',
+  decided_by text, decided_at timestamptz, created_at timestamptz default now());
+
+create table incidents (
+  id uuid primary key default gen_random_uuid(),
+  agent_id uuid references agents(id), connector_id uuid references connectors(id),
+  severity int default 2, message text,
+  resolved boolean default false, created_at timestamptz default now());
+
+create table kpi_daily (
+  day date primary key, snapshot jsonb not null);  -- nightly Conductor rollup
+
+-- ---------------- indexes ----------------
+create index on edges (src); create index on edges (dst);
+create index on nodes (type); create index on note_bodies (node_id);
+create index on embeddings using hnsw (embedding vector_cosine_ops);
+create index on agent_runs (agent_id, started_at desc);
+create index on tasks (state); create index on messages (channel, received_at desc);
+create index on connectors (status);
+
+-- ---------------- graph payload view (frontend S1) ----------------
+create view v_graph as
+select n.id, n.type, n.label, n.color, d.slug dept,
+       coalesce(json_agg(json_build_object('dst',e.dst,'kind',e.kind))
+         filter (where e.id is not null),'[]') out_edges
+from nodes n left join departments d on d.id=n.dept_id
+left join edges e on e.src=n.id group by n.id,d.slug;
+
+-- ---------------- seed: six crews (validated design-token colors) ----------------
+insert into departments (slug,label,color,sort) values
+ ('sales','Sales','#FF7A2F',1), ('finances','Finances','#2EE06E',2),
+ ('clients','Clients','#22D3EE',3), ('marketing','Marketing/Growth','#A3E635',4),
+ ('tech','TECH','#D05CFF',5), ('communications','Communications','#3F8CFF',6);
