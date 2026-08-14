@@ -3,7 +3,7 @@ id: conductor
 name: Conductor
 crew: tech
 role: Super agent - AI Head
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: operator
 tools: [broadcast, openclaw, tmux, gbrain]
 permissions: [broadcast, spawn, tmux, approve_request]

@@ -3,7 +3,7 @@ id: vantage-cohort
 name: Vantage Cohort
 crew: sales
 role: Vantage Lane Manager
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [attio, stripe]
 permissions: [read_gbrain, write_tasks, draft_reply]

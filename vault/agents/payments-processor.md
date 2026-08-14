@@ -3,7 +3,7 @@ id: payments-processor
 name: Payments Processor
 crew: finances
 role: Stripe/PayPal/Square Matcher
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [stripe, paypal, square]
 permissions: [read_gbrain, write_tasks, draft_reply]

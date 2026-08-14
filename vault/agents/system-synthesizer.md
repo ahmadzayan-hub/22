@@ -3,7 +3,7 @@ id: system-synthesizer
 name: System Synthesizer
 crew: tech
 role: Query Synthesizer
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [gbrain]
 permissions: [read_gbrain, write_tasks, draft_reply]

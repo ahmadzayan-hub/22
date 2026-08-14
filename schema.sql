@@ -65,7 +65,7 @@ create table agents (
   id uuid primary key default gen_random_uuid(),
   slug text unique not null, name text not null,
   dept_id uuid references departments(id),
-  role text, model text not null default 'qwen3.6-hermes-local',
+  role text, model text not null default 'grok-4',
   identity_path text not null,          -- /vault/agents/<slug>.md
   schedule_cron text, tools text[] default '{}', permissions text[] default '{}',
   status agent_status default 'disabled', version int default 1,
@@ -132,7 +132,7 @@ create table workflow_runs (
 
 create table personas (
   id uuid primary key default gen_random_uuid(),
-  name text not null, model text default 'qwen3.6-hermes-local',
+  name text not null, model text default 'grok-4',
   tone text[] default '{}', channels text[] default '{}',
   enabled boolean default false, prompt_md text);
 

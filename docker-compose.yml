@@ -25,6 +25,8 @@ services:
       DATABASE_URL: postgres://os:os@db:5432/os
       OPERATOR_TOKEN: ${OPERATOR_TOKEN:-local-dev-token}
       VAULT_PATH: /vault
+      XAI_API_KEY: ${XAI_API_KEY:-}
+      GROK_MODEL: ${GROK_MODEL:-grok-4}
       OLLAMA_HOST: http://ollama:11434
     volumes: [./vault:/vault]
     depends_on: {db: {condition: service_healthy}}

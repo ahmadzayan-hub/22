@@ -3,7 +3,7 @@ id: stripe-vantage
 name: Stripe Vantage
 crew: sales
 role: Payment-linked Reconciler
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [stripe, attio]
 permissions: [read_gbrain, write_tasks, draft_reply]

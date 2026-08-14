@@ -3,7 +3,7 @@ id: pava-confirm
 name: PAVA Confirm
 crew: finances
 role: Payment Confirmer
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [pava]
 permissions: [read_gbrain, write_tasks, draft_reply]

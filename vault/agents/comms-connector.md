@@ -3,7 +3,7 @@ id: comms-connector
 name: Comms Connector
 crew: tech
 role: Connector Auditor
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [comms-feed]
 permissions: [read_gbrain, write_tasks, draft_reply]

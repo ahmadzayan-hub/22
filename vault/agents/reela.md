@@ -3,7 +3,7 @@ id: reela
 name: Reela
 crew: marketing
 role: Republish & Vision Sync
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [youtube, tiktok]
 permissions: [read_gbrain, write_tasks, draft_reply]

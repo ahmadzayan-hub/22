@@ -3,7 +3,7 @@ id: payments-pulse
 name: Payments Pulse
 crew: finances
 role: Payout Health Pulse
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [whop, stripe]
 permissions: [read_gbrain, write_tasks, draft_reply]

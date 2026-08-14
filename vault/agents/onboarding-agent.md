@@ -3,7 +3,7 @@ id: onboarding-agent
 name: Onboarding Agent
 crew: clients
 role: New Client Onboarding
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [notion, slack, gmail]
 permissions: [read_gbrain, write_tasks, draft_reply]

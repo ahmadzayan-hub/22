@@ -3,7 +3,7 @@ id: slack-worker
 name: Slack Worker
 crew: communications
 role: Slack Digest
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [slack]
 permissions: [read_gbrain, write_tasks, draft_reply]

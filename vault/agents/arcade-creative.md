@@ -3,7 +3,7 @@ id: arcade-creative
 name: Arcade Creative
 crew: marketing
 role: UGC Variant Generator
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [arcade]
 permissions: [read_gbrain, write_tasks, draft_reply]

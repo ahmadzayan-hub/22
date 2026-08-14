@@ -3,7 +3,7 @@ id: rowotion-editor
 name: Rowotion Editor
 crew: marketing
 role: Short-form Edit Cutter
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [whisper, loom]
 permissions: [read_gbrain, write_tasks, draft_reply]

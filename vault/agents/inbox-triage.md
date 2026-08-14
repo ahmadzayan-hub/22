@@ -3,7 +3,7 @@ id: inbox-triage
 name: Inbox Triage
 crew: communications
 role: Cross-channel Prioritizer
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [gmail, slack, whatsapp]
 permissions: [read_gbrain, write_tasks, draft_reply]

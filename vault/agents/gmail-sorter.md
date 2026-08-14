@@ -3,7 +3,7 @@ id: gmail-sorter
 name: Gmail Sorter
 crew: communications
 role: Inbox Triage & Drafts
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [gmail]
 permissions: [read_gbrain, write_tasks, draft_reply]

@@ -3,7 +3,7 @@ id: manychat-mcp
 name: ManyChat MCP
 crew: marketing
 role: DM Funnel Automator
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [manychat]
 permissions: [read_gbrain, write_tasks, draft_reply]

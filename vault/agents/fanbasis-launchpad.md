@@ -3,7 +3,7 @@ id: fanbasis-launchpad
 name: FanBasis Launchpad
 crew: sales
 role: Launchpad Offer Runner
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [fanbasis]
 permissions: [read_gbrain, write_tasks, draft_reply]

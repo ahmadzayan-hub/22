@@ -59,7 +59,7 @@ const CH={gm:'Gmail',wa:'WhatsApp',sl:'Slack',tk:'TikTok'};
 document.getElementById('grid').innerHTML=P.map(([nm,c,on,q,tones,chs,used])=>`
  <div class="panel pc ${on?'on-card':''}">
    <div class="row"><span class="pav" style="border-color:${c};color:${c};box-shadow:0 0 14px ${c}33"></span>
-     <span><div class="nm">${nm}</div><div class="md">qwen3.6-hermes · LOCAL</div></span></div>
+     <span><div class="nm">${nm}</div><div class="md">grok-4 · xAI API</div></span></div>
    <div class="quote">${q}</div>
    <div class="lbl">TONE</div>
    <div class="tones">${tones.map(t=>`<span class="tone ${t.endsWith('*')?'act':''}">${t.replace('*','')}</span>`).join('')}</div>

@@ -3,7 +3,7 @@ id: native-suggest
 name: Native Suggest
 crew: marketing
 role: Hook & Script Suggester
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [gbrain]
 permissions: [read_gbrain, write_tasks, draft_reply]

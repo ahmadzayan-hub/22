@@ -1,6 +1,9 @@
+// Local sidecars: embeddings (bge-m3, 1024-dim — must match schema) + whisper ASR.
+// Chat/JSON generation lives in llm.ts (Grok API first, Ollama fallback).
 const OLLAMA = process.env.OLLAMA_HOST ?? "http://ollama:11434";
-export const EMBED_MODEL = process.env.EMBED_MODEL ?? "bge-m3";   // 1024-dim, matches schema
-export const LLM_MODEL  = process.env.LLM_MODEL  ?? "qwen3:8b";   // local stand-in for qwen3.6-hermes
+export const EMBED_MODEL = process.env.EMBED_MODEL ?? "bge-m3";
+
+export { llmJson } from "./llm.js";
 
 export async function embed(text: string): Promise<number[]> {
   const r = await fetch(`${OLLAMA}/api/embed`, { method: "POST",
@@ -8,15 +11,6 @@ export async function embed(text: string): Promise<number[]> {
     body: JSON.stringify({ model: EMBED_MODEL, input: [text.slice(0, 8000)] }) });
   if (!r.ok) throw new Error(`embed ${r.status}`);
   return ((await r.json() as any).embeddings as number[][])[0];
-}
-
-export async function llmJson<T = any>(prompt: string): Promise<T> {
-  const r = await fetch(`${OLLAMA}/api/generate`, { method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ model: LLM_MODEL, prompt, format: "json", stream: false,
-                           options: { temperature: 0.2 } }) });
-  if (!r.ok) throw new Error(`llm ${r.status}`);
-  return JSON.parse((await r.json() as any).response) as T;
 }
 
 export async function transcribe(buf: Buffer, name: string): Promise<string> {

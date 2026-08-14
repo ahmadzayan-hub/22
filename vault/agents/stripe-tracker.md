@@ -3,7 +3,7 @@ id: stripe-tracker
 name: Stripe Tracker
 crew: finances
 role: Income Tracker
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [stripe]
 permissions: [read_gbrain, write_tasks, draft_reply]

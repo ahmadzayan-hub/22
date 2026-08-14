@@ -3,7 +3,7 @@ id: model-auditor
 name: Model Auditor
 crew: tech
 role: Model Score Auditor
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [ollama]
 permissions: [read_gbrain, write_tasks, draft_reply]

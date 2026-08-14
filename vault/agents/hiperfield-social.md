@@ -3,7 +3,7 @@ id: hiperfield-social
 name: Hiperfield Social
 crew: marketing
 role: Daily Posts Runner
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [tiktok, youtube]
 permissions: [read_gbrain, write_tasks, draft_reply]

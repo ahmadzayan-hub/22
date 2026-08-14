@@ -3,7 +3,7 @@ id: sales-agent
 name: Sales Agent
 crew: sales
 role: Books & Pipeline Instance
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [attio, gbrain]
 permissions: [read_gbrain, write_tasks, draft_reply]

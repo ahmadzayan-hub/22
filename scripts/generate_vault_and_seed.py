@@ -74,7 +74,7 @@ id: {slug}
 name: {name}
 crew: {crew}
 role: {role}
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [{tools}]
 permissions: [read_gbrain, write_tasks, draft_reply]

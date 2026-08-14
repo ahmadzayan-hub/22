@@ -3,7 +3,7 @@ id: stack-monitor
 name: Stack Monitor
 crew: tech
 role: Local Stack Health
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [stack]
 permissions: [read_gbrain, write_tasks, draft_reply]

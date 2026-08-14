@@ -3,7 +3,7 @@ id: cernio-social
 name: Cernio Social Agent
 crew: marketing
 role: Cross-platform Publisher
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [tiktok, x-social, linkedin]
 permissions: [read_gbrain, write_tasks, draft_reply]

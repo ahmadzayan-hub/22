@@ -3,7 +3,7 @@ id: rae-rinters
 name: Rae Rinters
 crew: clients
 role: Client Relationship Owner
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [gmail, whatsapp]
 permissions: [read_gbrain, write_tasks, draft_reply]

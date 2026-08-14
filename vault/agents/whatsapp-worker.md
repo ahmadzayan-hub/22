@@ -3,7 +3,7 @@ id: whatsapp-worker
 name: WhatsApp Worker
 crew: communications
 role: WhatsApp Maintainer
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [whatsapp, waapi]
 permissions: [read_gbrain, write_tasks, draft_reply]

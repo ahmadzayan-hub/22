@@ -3,7 +3,7 @@ id: nexo-launchpad-cohort
 name: Nexo Launchpad Cohort
 crew: sales
 role: Cohort Nurturer
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [fanbasis, gmail]
 permissions: [read_gbrain, write_tasks, draft_reply]

@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-08-14 — LLM provider: Grok API (xAI)
+- New `services/llm.ts`: chat/JSON generation goes to the Grok API
+  (`api.x.ai/v1/chat/completions`, `GROK_MODEL` default `grok-4`,
+  `response_format: json_object`); local Ollama is the automatic fallback when
+  `XAI_API_KEY` is unset or Grok errors. `/system/status` now reports the
+  active provider+model.
+- Embeddings stay local (`bge-m3`, 1024-dim — xAI has no embeddings endpoint),
+  so `embeddings vector(1024)` and G-Brain search are unchanged. Whisper stays.
+- Sweep: schema defaults, all 35 vault identities + seed, openclaw template,
+  compose env, `.env.example`, and the Org Chart / Workflows / Personas mockup
+  model labels now read `grok-4`.
+
 ## 2026-08-14 — M3: agent runtime
 - **Vault loader** (`runtime/vault.ts`): parses AGENT CONTRACT frontmatter +
   sections, syncs identities → `agents` (vault owns identity fields, DB keeps

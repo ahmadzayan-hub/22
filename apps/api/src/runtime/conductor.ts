@@ -44,7 +44,7 @@ prioritizing failures, stalled deals, overdue tasks, stale comms. Never propose 
     // deterministic fallback: LLM down must not kill the standup
     plan = {
       summary_lines: [
-        `standup ${day} (deterministic fallback — local LLM unreachable)`,
+        `standup ${day} (deterministic fallback — LLM unreachable)`,
         `agents with failed runs (24h): ${state.failed.length}`,
         `stalled deals: ${state.stalled.length}`,
         `open/overdue tasks: ${state.overdue.length}`,
@@ -99,7 +99,7 @@ id: ${slug}
 name: OpenClaw ${slug.slice(-4)}
 crew: tech
 role: Ad-hoc sub-agent (openclaw)
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [gbrain]
 permissions: [read_gbrain]
@@ -158,7 +158,7 @@ Reply as JSON {"reply": string, "create_tasks": [{"crew","title"}]}. Crews: ${CR
           [t.title.slice(0, 200), t.crew]);
     return { reply: r.reply, tasks_created: (r.create_tasks ?? []).length };
   } catch (e: any) {
-    return { reply: `Conductor is degraded (local LLM unreachable: ${String(e?.message ?? e)}). ` +
+    return { reply: `Conductor is degraded (LLM unreachable: ${String(e?.message ?? e)}). ` +
                     `Status — agents ${agents.rows[0].l}/${agents.rows[0].t} live, ${tasks.rows[0].o} open tasks.`,
              tasks_created: 0 };
   }

@@ -3,7 +3,7 @@ id: data-agent
 name: Data Agent
 crew: tech
 role: G-Brain Analyst
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [gbrain]
 permissions: [read_gbrain, write_tasks, draft_reply]

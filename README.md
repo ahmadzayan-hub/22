@@ -1,7 +1,7 @@
 # ALKAHTANI OS
 
 An Agentic Operating System: one human Operator, one **CONDUCTOR** super-agent
-(AI HEAD, `qwen3.6-hermes` local), six crews, **35 agents**, a pgvector-backed
+(AI HEAD, **Grok API** `grok-4`, local fallback), six crews, **35 agents**, a pgvector-backed
 **G-BRAIN** knowledge core, and a live business dashboard — dark
 terminal-brutalist UI throughout.
 
@@ -23,11 +23,11 @@ docs/                          PLAN.md · API.md · AGENT_CONTRACT.md
 ## Quickstart
 
 ```bash
-cp .env.example .env                          # set OPERATOR_TOKEN
+cp .env.example .env                          # set OPERATOR_TOKEN and XAI_API_KEY (Grok)
 python3 scripts/generate_vault_and_seed.py    # → vault/ + seed.sql (already committed)
 docker compose up -d --build                  # db auto-runs schema + seed
-docker compose exec ollama ollama pull bge-m3
-docker compose exec ollama ollama pull qwen3:8b     # local stand-in for qwen3.6-hermes
+docker compose exec ollama ollama pull bge-m3        # embeddings stay local (1024-dim)
+docker compose exec ollama ollama pull qwen3:8b      # optional: LLM fallback when Grok is down
 docker compose --profile asr up -d whisper          # only if you need voice ingest
 
 # smoke (M1+M2 gates)

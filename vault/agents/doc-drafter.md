@@ -3,7 +3,7 @@ id: doc-drafter
 name: Doc Drafter
 crew: tech
 role: Docs Drafter
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [notion, drive]
 permissions: [read_gbrain, write_tasks, draft_reply]

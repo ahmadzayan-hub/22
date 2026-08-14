@@ -78,7 +78,7 @@
   <div class="card cond">
     <div class="hd">
       <span class="spiral"></span><b>CONDUCTOR</b><span class="aihead">AI HEAD</span>
-      <i>super agent · qwen3.6-hermes · local · ctx 32k</i>
+      <i>super agent · grok-4 · xAI API · ctx 256k</i>
       <span class="live"><span class="led"></span>LIVE</span>
     </div>
     <div class="chat">
@@ -154,7 +154,7 @@ document.getElementById('crews').innerHTML = CREWS.map(cr=>`
    ${cr.agents.map(a=>`
    <div class="acard ${a[3]&&cr.name==='SALES'&&a[0]==='Sales Agent'?'hl':''}">
      <b>${a[0]}</b><i>${a[1]}</i>
-     <div class="tags"><span class="mtag">qwen3.6-hermes</span>${a[2].map(t=>`<span class="mtag">${t}</span>`).join('')}${a[3]?'<span class="btag">BUILTIN</span>':''}</div>
+     <div class="tags"><span class="mtag">grok-4</span>${a[2].map(t=>`<span class="mtag">${t}</span>`).join('')}${a[3]?'<span class="btag">BUILTIN</span>':''}</div>
    </div>`).join('')}
    <div class="more">+ ${cr.more}</div>
  </div>`).join('');

@@ -3,7 +3,7 @@ id: attio-crm
 name: Attio CRM
 crew: sales
 role: Books & Pipeline Sync
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [attio]
 permissions: [read_gbrain, write_tasks, draft_reply]

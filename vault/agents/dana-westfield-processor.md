@@ -3,7 +3,7 @@ id: dana-westfield-processor
 name: Dana Westfield Processor
 crew: finances
 role: Reconciliation Processor
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [stripe, square]
 permissions: [read_gbrain, write_tasks, draft_reply]

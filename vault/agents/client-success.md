@@ -3,7 +3,7 @@ id: client-success
 name: Client Success
 crew: clients
 role: Active Client Service
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [slack, notion]
 permissions: [read_gbrain, write_tasks, draft_reply]

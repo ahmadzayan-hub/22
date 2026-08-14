@@ -3,7 +3,7 @@ id: client-roster
 name: Client Roster
 crew: clients
 role: Roster Keeper
-model: qwen3.6-hermes-local
+model: grok-4
 reports_to: conductor
 tools: [attio, notion]
 permissions: [read_gbrain, write_tasks, draft_reply]
