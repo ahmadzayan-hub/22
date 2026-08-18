@@ -168,7 +168,13 @@ from nodes n left join departments d on d.id=n.dept_id
 left join edges e on e.src=n.id group by n.id,d.slug;
 
 -- ---------------- seed: six crews (validated design-token colors) ----------------
-insert into departments (slug,label,color,sort) values
- ('sales','Sales','#FF7A2F',1), ('finances','Finances','#2EE06E',2),
- ('clients','Clients','#22D3EE',3), ('marketing','Marketing/Growth','#A3E635',4),
- ('tech','TECH','#D05CFF',5), ('communications','Communications','#3F8CFF',6);
+-- ids are uuid5(NS, 'd:<slug>') from scripts/generate_vault_and_seed.py's NS —
+-- seed.sql's agents/nodes reference these exact department ids as dept_id, so
+-- they must match here, not be left to gen_random_uuid().
+insert into departments (id,slug,label,color,sort) values
+ ('65d09eb5-757f-5824-91fd-8df327070e82','sales','Sales','#FF7A2F',1),
+ ('2d1cb564-e12f-5ba4-a5f0-d7cc061e2db6','finances','Finances','#2EE06E',2),
+ ('77fc6ec6-3a3d-59ba-8a73-57add8860f4a','clients','Clients','#22D3EE',3),
+ ('1d3c81ce-c848-5bdf-b1d2-8f4d9c8414bf','marketing','Marketing/Growth','#A3E635',4),
+ ('2ce1bd01-9401-57ec-a89d-768802c23c11','tech','TECH','#D05CFF',5),
+ ('6350edf5-250a-5470-bb54-d29ca60c16a4','communications','Communications','#3F8CFF',6);
