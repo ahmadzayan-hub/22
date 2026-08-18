@@ -40,6 +40,10 @@ curl -H "$H" -X POST -H "Content-Type: application/json" \
      -d '{"query":"attio clean roster"}' localhost:8080/api/v1/gbrain/search
 curl -H "$H" localhost:8080/api/v1/gbrain/stats
 open http://localhost:3000/g-brain
+
+# smoke (M3+M4 gates, once the api is up)
+bash scripts/smoke/m3.sh
+bash scripts/smoke/m4.sh
 ```
 
 ## Milestones
@@ -49,7 +53,7 @@ open http://localhost:3000/g-brain
 | M1 | Skeleton: monorepo, docker, operator auth, nav shell, theme | **code in repo** — run compose gate locally |
 | M2 | G-Brain: ingest → md → chunk → embed pipeline, graph API, radial view | **code in repo** — run smoke gate locally |
 | M3 | Runtime: vault loader, scheduler, run log, tmux crews, Conductor loop | **code in repo** — `bash scripts/smoke/m3.sh` |
-| M4 | Crews + MCP connector modules w/ health probes | vault + registry seeded; probes pending |
+| M4 | Crews + MCP connector modules w/ health probes | **code in repo** — `bash scripts/smoke/m4.sh` |
 | M5 | Dashboard / funnel / task board APIs + UI | mockups final; APIs pending |
 | M6 | Hardening: alerts, nightly self-report, backups, docs | pending |
 

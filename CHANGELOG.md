@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-08-18 — M4: MCP connector health probes
+- **`connectors/`**: one real HTTP probe per named MCP connector — Attio, Stripe,
+  PayPal, Square, Whop, Slack, Gmail, WhatsApp, ManyChat, Notion, GoHighLevel hit
+  their actual account/self endpoints (Stripe balance, Slack `auth.test`, Gmail via
+  a live OAuth refresh-token exchange, PayPal client-credentials grant, etc.); PAVA
+  has no documented public health endpoint, so it reports "key present, validity
+  unconfirmed" rather than faking a check. Every probe times out at 6s, classifies
+  slow-but-ok responses as `degraded`, and turns any network/HTTP failure into an
+  `offline` result — a probe never throws or crashes the health-check pass. An
+  unset env key short-circuits to `offline` with no network call at all.
+- Status transitions land in `connectors` (`status`, `latency_ms`, `last_sync_at`,
+  `health` jsonb) and open an `incidents` row on any drop out of `live`.
+- Routes: `GET /api/v1/connectors`, `POST /api/v1/connectors/:slug/check`,
+  `POST /api/v1/connectors/check-all`. Scheduler runs `check-all` on a 5-minute
+  BullMQ repeatable job (Redis down degrades the same way the agent cron does).
+- Security note: the Gmail probe's OAuth access token is used in-memory only and
+  never written into a `ProbeResult.detail` — that field is persisted to
+  `connectors.health` and returned over the API, so no token can leak through it.
+- Gate: `scripts/smoke/m4.sh`.
+
 ## 2026-08-14 — LLM provider: Grok API (xAI)
 - New `services/llm.ts`: chat/JSON generation goes to the Grok API
   (`api.x.ai/v1/chat/completions`, `GROK_MODEL` default `grok-4`,
