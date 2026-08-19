@@ -41,9 +41,13 @@ curl -H "$H" -X POST -H "Content-Type: application/json" \
 curl -H "$H" localhost:8080/api/v1/gbrain/stats
 open http://localhost:3000/g-brain
 
-# smoke (M3+M4 gates, once the api is up)
+# smoke (M3-M5 gates, once the api is up)
 bash scripts/smoke/m3.sh
 bash scripts/smoke/m4.sh
+bash scripts/smoke/m5.sh
+open http://localhost:3000/dashboard
+open http://localhost:3000/funnel
+open http://localhost:3000/tasks
 ```
 
 ## Milestones
@@ -54,7 +58,7 @@ bash scripts/smoke/m4.sh
 | M2 | G-Brain: ingest → md → chunk → embed pipeline, graph API, radial view | **code in repo** — run smoke gate locally |
 | M3 | Runtime: vault loader, scheduler, run log, tmux crews, Conductor loop | **code in repo** — `bash scripts/smoke/m3.sh` |
 | M4 | Crews + MCP connector modules w/ health probes | **code in repo** — `bash scripts/smoke/m4.sh` |
-| M5 | Dashboard / funnel / task board APIs + UI | mockups final; APIs pending |
+| M5 | Dashboard / funnel / task board APIs + UI | **code in repo** — `bash scripts/smoke/m5.sh` |
 | M6 | Hardening: alerts, nightly self-report, backups, docs | pending |
 
 ## Design

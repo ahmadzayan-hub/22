@@ -4,6 +4,9 @@ import { gbrainRoutes } from "./routes/gbrain.js";
 import { agentRoutes } from "./routes/agents.js";
 import { conductorRoutes } from "./routes/conductor.js";
 import { connectorRoutes } from "./routes/connectors.js";
+import { dashboardRoutes } from "./routes/dashboard.js";
+import { funnelRoutes } from "./routes/funnel.js";
+import { taskRoutes } from "./routes/tasks.js";
 import { syncVault } from "./runtime/vault.js";
 import { startScheduler } from "./runtime/scheduler.js";
 import { ensureSessions } from "./runtime/tmux.js";
@@ -16,6 +19,9 @@ app.register(gbrainRoutes, { prefix: "/api/v1/gbrain" });
 app.register(agentRoutes, { prefix: "/api/v1/agents" });
 app.register(conductorRoutes, { prefix: "/api/v1/conductor" });
 app.register(connectorRoutes, { prefix: "/api/v1/connectors" });
+app.register(dashboardRoutes, { prefix: "/api/v1/dashboard" });
+app.register(funnelRoutes, { prefix: "/api/v1/funnel" });
+app.register(taskRoutes, { prefix: "/api/v1/tasks" });
 
 // boot: vault → agents table, tmux crews, cron scheduler (each degrades gracefully)
 (async () => {
