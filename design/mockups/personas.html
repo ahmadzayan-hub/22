@@ -1,0 +1,71 @@
+<!doctype html><html><head><meta charset="utf-8"><title>PERSONAS</title>
+<link rel="stylesheet" href="base.css">
+<style>
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;padding:14px 30px 0}
+.pc{padding:15px 16px;display:flex;flex-direction:column;gap:0;position:relative}
+.pc .row{display:flex;align-items:center;gap:11px}
+.pav{width:38px;height:38px;border-radius:50%;border:1.5px solid;position:relative;flex:none}
+.pav:before{content:"";position:absolute;left:50%;top:8px;width:11px;height:11px;margin-left:-5.5px;border-radius:50%;background:currentColor}
+.pav:after{content:"";position:absolute;left:50%;bottom:4px;width:20px;height:10px;margin-left:-10px;border-radius:10px 10px 0 0;background:currentColor}
+.pc .nm{font-size:15px;font-weight:800;letter-spacing:.03em}
+.pc .md{font-size:8.5px;color:var(--faint);letter-spacing:.1em;margin-top:3px}
+.pc .quote{margin-top:11px;font-size:9.5px;color:var(--dim);border-left:2px solid var(--line2);padding:5px 9px;line-height:1.6;min-height:38px}
+.lbl{font-size:7.5px;letter-spacing:.2em;color:var(--faint);margin:11px 0 5px}
+.tones{display:flex;gap:5px;flex-wrap:wrap}
+.tone{font-size:8.5px;letter-spacing:.08em;color:var(--ink);border:1px solid var(--line2);padding:2.5px 8px;background:rgba(7,12,14,.6)}
+.tone.act{border-color:rgba(46,224,110,.65);color:var(--ok);box-shadow:0 0 10px rgba(46,224,110,.15)}
+.chs{display:flex;gap:5px;flex-wrap:wrap}
+.pc .ft{display:flex;align-items:center;margin-top:13px;padding-top:11px;border-top:1px solid var(--line)}
+.pc .use{font-size:8px;color:var(--faint);letter-spacing:.08em}
+.pc .ft .tgl{margin-left:auto}
+.pc.on-card{border-color:rgba(46,224,110,.4);box-shadow:0 0 26px rgba(46,224,110,.07)}
+.pc.ghost{border-style:dashed;align-items:center;justify-content:center;min-height:264px;
+  font-size:10.5px;color:var(--faint);letter-spacing:.16em;background:transparent}
+</style></head><body>
+<div class="stage">
+  <div class="gridbg"></div>
+  <div id="sidebar"></div>
+  <div class="main">
+    <div class="pagehead">
+      <div><div class="over">// VARIANTS</div><h1>PERSONAS</h1></div>
+      <span class="spacer"></span>
+      <span class="chip active" style="align-self:center">4 ENABLED</span>
+      <span class="chip dim" style="align-self:center">USED BY 9 AGENTS</span>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+  <div class="scan"></div><div class="vig"></div>
+</div>
+<script src="ui.js"></script>
+<script>
+Sidebar('Personas');
+const P=[
+ ['Operator Mode','#2ee06e',true, '"Direct, zero fluff. Numbers first, then the ask."',
+   ['formal','friendly*','pitch'],['gm','wa','sl'],'conductor · comms-agent'],
+ ['Launchpad Cohort','#ffd23f',false,'"High-energy, cohort language, always a next step."',
+   ['formal','friendly','pitch*'],['gm','wa'],'nexo-cohort · fanbasis-launchpad'],
+ ['Personal Brand','#d05cff',true, '"First person, story-led, one sharp insight per post."',
+   ['formal','friendly*'],['gm','wa','sl','tk'],'social-agent · cernio-social'],
+ ['Client Face','#22d3ee',false,'"Warm, precise, never over-promises. SLA-aware."',
+   ['formal*','friendly'],['gm','wa'],'client-success · onboarding-agent'],
+ ['Nexo Pitch','#ff7a2f',true, '"Discovery questions first. Price only after value."',
+   ['pitch*','formal'],['wa','gm'],'sales-agent · vantage-cohort'],
+ ['Vantage','#3f8cff',true, '"Executive brevity: three bullets, one recommendation."',
+   ['formal*'],['gm','sl'],'vantage-cohort · doc-drafter'],
+ ['UGC Voice','#a3e635',false,'"Hook in 6 words. Casual, native to the feed."',
+   ['friendly','pitch*'],['tk'],'ugc-generator · reela'],
+];
+const CH={gm:'Gmail',wa:'WhatsApp',sl:'Slack',tk:'TikTok'};
+document.getElementById('grid').innerHTML=P.map(([nm,c,on,q,tones,chs,used])=>`
+ <div class="panel pc ${on?'on-card':''}">
+   <div class="row"><span class="pav" style="border-color:${c};color:${c};box-shadow:0 0 14px ${c}33"></span>
+     <span><div class="nm">${nm}</div><div class="md">grok-4 · xAI API</div></span></div>
+   <div class="quote">${q}</div>
+   <div class="lbl">TONE</div>
+   <div class="tones">${tones.map(t=>`<span class="tone ${t.endsWith('*')?'act':''}">${t.replace('*','')}</span>`).join('')}</div>
+   <div class="lbl">CHANNELS</div>
+   <div class="chs">${chs.map(k=>`<span class="ch ${k}">${CH[k]}</span>`).join('')}</div>
+   <div class="ft"><span class="use">USED BY: ${used}</span><span class="tgl ${on?'on':''}"><i></i></span></div>
+ </div>`).join('')+`<div class="panel pc ghost">+ NEW PERSONA<br><span style="font-size:8px;margin-top:8px">DRAFTED DISABLED · 3-RUN SHADOW TEST</span></div>`;
+</script>
+</body></html>

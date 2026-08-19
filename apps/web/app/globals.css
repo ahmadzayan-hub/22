@@ -1,0 +1,7 @@
+@import "tailwindcss";
+:root { --bg:#05080A; --line:#242B30; --ink:#E8F1EE;
+  --sales:#FF7A2F; --fin:#2EE06E; --cli:#22D3EE; --mkt:#A3E635; --tech:#D05CFF; --com:#3F8CFF; }
+body { background:var(--bg); color:var(--ink); font-family:"JetBrains Mono",ui-monospace,monospace; }
+.neon { text-shadow:0 0 8px currentColor; }
+.gridbg { background-image:linear-gradient(rgba(140,180,168,.06) 1px,transparent 1px),
+         linear-gradient(90deg,rgba(140,180,168,.06) 1px,transparent 1px); background-size:44px 44px; }

@@ -1,0 +1,148 @@
+<!doctype html><html><head><meta charset="utf-8"><title>BUSINESS DASHBOARD</title>
+<link rel="stylesheet" href="base.css">
+<style>
+.wrap{padding:0 30px;display:flex;flex-direction:column;gap:14px}
+.hrow{display:flex;align-items:flex-end;gap:16px;padding:22px 30px 2px}
+.hrow .over{font-size:11px;letter-spacing:.26em;color:var(--dim);margin-bottom:7px}
+.hrow h1{font-size:40px;font-weight:800;letter-spacing:.04em;line-height:.95;text-shadow:0 0 26px rgba(232,241,238,.28)}
+.hrow .meta{margin-left:auto;text-align:right;font-size:10px;color:var(--dim);letter-spacing:.1em;line-height:1.9}
+.hrow .meta b{color:var(--ok)}
+.cards{display:grid;grid-template-columns:1.25fr 1.15fr .9fr;gap:14px}
+.kpi{padding:14px 18px 15px}
+.kpi .lab{font-size:10px;letter-spacing:.2em;color:var(--dim);display:flex;align-items:center;gap:10px}
+.kpi .big{font-size:37px;font-weight:800;letter-spacing:.01em;margin-top:8px;line-height:1}
+.kpi .big small{font-size:15px;color:var(--dim);font-weight:400;letter-spacing:.04em}
+.kpi .sub{margin-top:9px;font-size:9.5px;color:var(--faint);letter-spacing:.06em}
+.pillw{font-size:8.5px;font-weight:800;letter-spacing:.12em;color:#241500;background:var(--warn);padding:2px 7px}
+.stagebar{display:flex;gap:2px;margin-top:10px;height:7px}
+.stagebar i{background:#25332f}
+.stagebar i.f{background:var(--ok);box-shadow:0 0 8px rgba(46,224,110,.5)}
+.track{position:relative;height:8px;background:#152019;margin-top:10px}
+.track i{position:absolute;left:0;top:0;bottom:0;background:var(--ok);border-radius:0 4px 4px 0;box-shadow:0 0 10px rgba(46,224,110,.55)}
+.spark{display:flex;align-items:flex-end;gap:3px;height:34px;margin-top:8px}
+.spark i{width:12px;background:#31413c}
+.spark i.hot{background:var(--ok);box-shadow:0 0 8px rgba(46,224,110,.5)}
+.frow{padding:13px 18px 15px}
+.frow .fh{display:flex;gap:14px;align-items:baseline;font-size:10.5px;letter-spacing:.18em;color:var(--dim)}
+.frow .fh b{color:var(--ink);font-size:12px}
+.frow .fh .win{margin-left:auto;color:var(--faint);font-size:9px}
+.stage-row{display:grid;grid-template-columns:120px 1fr 118px;align-items:center;gap:14px;margin-top:11px}
+.stage-row .sl{font-size:11px;color:var(--ink);letter-spacing:.04em}
+.stage-row .bar{position:relative;height:17px;background:rgba(21,32,25,.6)}
+.stage-row .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:0 4px 4px 0}
+.stage-row .vals{font-size:11px;text-align:right;letter-spacing:.04em}
+.stage-row .vals b{font-size:13px}
+.stage-row .vals span{color:var(--faint);font-size:9.5px;margin-left:6px}
+.conv{font-size:8.5px;color:var(--faint);letter-spacing:.08em;margin:1px 0 0 134px}
+.conv b{color:#79d6a2;font-weight:400}
+.brow{display:grid;grid-template-columns:1fr 1.15fr;gap:14px}
+.wf{padding:13px 18px 12px}
+.wf .hd{display:flex;align-items:baseline;gap:12px;font-size:10.5px;letter-spacing:.18em;color:var(--dim)}
+.wf .hd b{color:var(--ink);font-size:12px}
+.wf .hero{display:flex;align-items:baseline;gap:14px;margin:8px 0 4px}
+.wf .hero b{font-size:44px;font-weight:800;color:var(--ok);text-shadow:0 0 22px rgba(46,224,110,.45)}
+.wf .hero span{font-size:9.5px;color:var(--dim);letter-spacing:.1em;line-height:1.7}
+.dept{display:grid;grid-template-columns:14px 118px 34px 1fr;gap:8px;align-items:center;margin:5.5px 0}
+.dept .d{width:8px;height:8px;border-radius:50%}
+.dept .nm{font-size:10px;color:var(--ink);letter-spacing:.03em}
+.dept .ct{font-size:10px;color:var(--dim);text-align:right}
+.dept .tr{height:5px;background:#1a2420;position:relative}
+.dept .tr i{position:absolute;left:0;top:0;bottom:0;background:#cfe0da;border-radius:0 3px 3px 0;opacity:.9}
+.tb{padding:13px 18px 12px}
+.tb .hd{display:flex;align-items:baseline;gap:12px;font-size:10.5px;letter-spacing:.18em;color:var(--dim)}
+.tb .hd b{color:var(--ink);font-size:12px}
+.seg{display:flex;gap:2px;height:24px;margin-top:10px;font-size:9.5px;font-weight:800;letter-spacing:.1em}
+.seg i{display:flex;align-items:center;justify-content:center;font-style:normal}
+.seg .o{background:rgba(255,176,32,.16);color:var(--warn);border:1px solid rgba(255,176,32,.5)}
+.seg .d{background:rgba(238,244,242,.10);color:var(--ink);border:1px solid rgba(238,244,242,.3)}
+.seg .n{background:rgba(46,224,110,.14);color:var(--ok);border:1px solid rgba(46,224,110,.5)}
+.trow{display:flex;align-items:center;gap:10px;padding:7px 2px;border-bottom:1px solid var(--line);font-size:11px}
+.trow:last-child{border-bottom:0}
+.st{font-size:8px;font-weight:800;letter-spacing:.12em;padding:2px 6px;border:1px solid;flex:none}
+.st.o{color:var(--warn);border-color:rgba(255,176,32,.55)}
+.st.d{color:var(--ink);border-color:rgba(238,244,242,.4)}
+.st.n{color:var(--ok);border-color:rgba(46,224,110,.55)}
+.trow .t{flex:1;letter-spacing:.02em}
+.trow .cw{font-size:9px;color:var(--faint);letter-spacing:.08em}
+</style></head><body>
+<div class="stage">
+  <div class="gridbg"></div>
+  <div id="sidebar"></div>
+  <div class="main">
+    <div class="hrow">
+      <div><div class="over">// EXECUTIVE DASHBOARD</div><h1>BUSINESS DASHBOARD</h1></div>
+      <div class="meta">WED 2026-08-13 · 20:31 GST<br><b>● WS CONNECTED</b> · auto-fed from runs / tasks / deals</div>
+    </div>
+    <div class="wrap">
+      <div class="cards">
+        <div class="panel kpi">
+          <div class="lab">PIPELINE — OPEN <span class="pillw">3 STALLED</span></div>
+          <div class="big mono-num">$128k <small>· 6 live deals</small></div>
+          <div class="stagebar"><i style="flex:2.2" class="f"></i><i style="flex:1.6" class="f"></i><i style="flex:1.1" class="f"></i><i style="flex:1.4"></i><i style="flex:.9"></i><i style="flex:.8"></i></div>
+          <div class="sub">largest: vantage lane $54k · oldest stall 11d — nudge queued</div>
+        </div>
+        <div class="panel kpi">
+          <div class="lab">CLOSED — WON</div>
+          <div class="big mono-num">$45k <small>/ 7 deals</small></div>
+          <div class="track"><i style="width:50%"></i></div>
+          <div class="sub">50% of journeys convert · avg cycle 19d</div>
+        </div>
+        <div class="panel kpi">
+          <div class="lab">MONTHLY</div>
+          <div class="big mono-num">$3.9k <small>MRR</small></div>
+          <div class="spark"><i style="height:34%"></i><i style="height:42%"></i><i style="height:38%"></i><i style="height:52%"></i><i style="height:47%"></i><i style="height:64%"></i><i style="height:72%"></i><i style="height:88%" class="hot"></i></div>
+          <div class="sub" style="color:#79d6a2">▲ +12% vs JUL</div>
+        </div>
+      </div>
+
+      <div class="panel frow">
+        <div class="fh"><b>FUNNEL</b> 34 JOURNEYS · 1 ARCHIVED<span class="win">WINDOW: LAST 30D</span></div>
+        <div id="funnel"></div>
+      </div>
+
+      <div class="brow">
+        <div class="panel wf">
+          <div class="hd"><b>WORKFORCE</b> 35/30 LIVE</div>
+          <div class="hero"><b>100%</b><span>RUN SUCCESS<br>21 RUNS TODAY · TARGET 30 · +5 OVER PLAN</span></div>
+          <div id="depts"></div>
+        </div>
+        <div class="panel tb">
+          <div class="hd"><b>TASK BOARD</b> 11 TOTAL<span style="margin-left:auto;font-size:9px;color:var(--faint)">CONDUCTOR STANDUP 07:00 ▸</span></div>
+          <div class="seg"><i class="o" style="flex:4">4 OPEN</i><i class="d" style="flex:3">3 DOING</i><i class="n" style="flex:4">4 DONE</i></div>
+          <div style="margin-top:8px">
+            <div class="trow"><span class="st d">DOING</span><span class="t">Cut the sales-call highlight reel</span><span class="cw">MARKETING · rowotion-editor</span></div>
+            <div class="trow"><span class="st o">OPEN</span><span class="t">Qualify 22 new DMs from the campaign</span><span class="cw">SALES · sales-agent</span></div>
+            <div class="trow"><span class="st o">OPEN</span><span class="t">Schedule this week's cross-platform posts</span><span class="cw">MARKETING · social-agent</span></div>
+            <div class="trow"><span class="st d">DOING</span><span class="t">Generate 5 UGC variants for the new offer</span><span class="cw">MARKETING · ugc-generator</span></div>
+            <div class="trow"><span class="st n">DONE</span><span class="t">Reconcile Stripe payouts vs FanBasis</span><span class="cw">FINANCES · stripe-tracker</span></div>
+            <div class="trow"><span class="st n">DONE</span><span class="t">Onboard 2 new clients — kickoff docs sent</span><span class="cw">CLIENTS · onboarding-agent</span></div>
+            <div class="trow"><span class="st o">OPEN</span><span class="t">Draft weekly exec report</span><span class="cw">TECH · doc-drafter</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="scan"></div><div class="vig"></div>
+</div>
+<script src="ui.js"></script>
+<script>
+Sidebar('Dashboard');
+const STAGES=[['First touch',34,null],['Engaged',28,82],['Nurtured',20,71],['Opted in',15,75],['Converted',7,47]];
+const max=34;
+document.getElementById('funnel').innerHTML = STAGES.map(([n,v,conv],i)=>{
+  const pct=Math.round(v/max*100);
+  const alpha=(.95-i*.13).toFixed(2);
+  return `${conv?`<div class="conv">↳ <b>${conv}% carry from previous stage</b></div>`:''}
+  <div class="stage-row">
+    <span class="sl">${n}</span>
+    <span class="bar"><i style="width:${pct}%;background:rgba(46,224,110,${alpha});box-shadow:0 0 12px rgba(46,224,110,.35)"></i></span>
+    <span class="vals mono-num"><b>${v}</b><span>${pct}%</span></span>
+  </div>`;}).join('');
+const DEPTS=[['Sales','#ff7a2f',6,6],['Finances','#2ee06e',6,6],['Clients','#22d3ee',4,4],
+  ['Marketing/Growth','#a3e635',7,7],['TECH','#d05cff',7,7],['Communications','#3f8cff',5,5]];
+document.getElementById('depts').innerHTML = DEPTS.map(([n,c,live,tot])=>`
+  <div class="dept"><span class="d" style="background:${c};box-shadow:0 0 8px ${c}"></span>
+  <span class="nm">${n}</span><span class="ct mono-num">${live}/${tot}</span>
+  <span class="tr"><i style="width:${Math.round(live/tot*100)}%"></i></span></div>`).join('');
+</script>
+</body></html>

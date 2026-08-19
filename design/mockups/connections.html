@@ -1,0 +1,91 @@
+<!doctype html><html><head><meta charset="utf-8"><title>CONNECTIONS</title>
+<link rel="stylesheet" href="base.css">
+<style>
+.health{display:flex;align-items:center;gap:14px;margin:0 34px;padding:12px 0 0}
+.health .lbl{font-size:10px;letter-spacing:.18em;color:var(--dim)}
+.health .segs{flex:1;display:flex;gap:3px;height:10px}
+.health .segs i{flex:1}
+.health .n{font-size:12px;font-weight:800;letter-spacing:.1em}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;padding:16px 30px 0}
+.card{padding:14px 16px;position:relative}
+.card .bdg{position:absolute;top:12px;right:12px}
+.mono{width:40px;height:40px;border:1.5px solid;display:flex;align-items:center;justify-content:center;
+  font-size:15px;font-weight:800;letter-spacing:.02em}
+.card .nm{font-size:14.5px;font-weight:800;letter-spacing:.03em;margin-top:11px}
+.card .kind{font-size:8.5px;color:var(--faint);letter-spacing:.16em;margin-top:3px}
+.card .meta{display:flex;gap:14px;margin-top:10px;font-size:9px;color:var(--dim);letter-spacing:.05em}
+.card .meta b{color:var(--ink);font-weight:700}
+.up{display:flex;gap:2.5px;margin-top:10px;height:12px;align-items:flex-end}
+.up i{width:9px;background:#22302b}
+.up i.g{background:var(--ok);opacity:.85}
+.up i.a{background:var(--warn);opacity:.9}
+.up i.r{background:var(--bad);opacity:.9}
+.card .ft{display:flex;justify-content:space-between;margin-top:11px;padding-top:9px;border-top:1px solid var(--line);
+  font-size:8.5px;color:var(--faint);letter-spacing:.12em}
+.card.is-off{opacity:.78}
+.foot{margin:14px 30px 0;font-size:9px;color:var(--faint);letter-spacing:.1em;display:flex;gap:20px}
+.foot b{color:var(--dim);font-weight:400}
+</style></head><body>
+<div class="stage">
+  <div class="gridbg"></div>
+  <div id="sidebar"></div>
+  <div class="main">
+    <div class="pagehead">
+      <div><div class="over">// SYSTEM</div><h1>CONNECTIONS</h1></div>
+      <span class="spacer"></span>
+      <span class="chip dim" style="align-self:center">PROBE ALL ⟳</span>
+      <span class="chip active" style="align-self:center">+ ADD CONNECTOR</span>
+    </div>
+    <div class="health">
+      <span class="lbl">SYSTEM HEALTH</span>
+      <span class="segs" id="segs"></span>
+      <span class="n mono-num" style="color:var(--ok)">18/22 SYSTEMS LIVE</span>
+    </div>
+    <div class="grid" id="grid"></div>
+    <div class="foot">
+      <span><b>12 MCP CONNECTORS</b> + 10 INTERNAL SYSTEMS (db · redis · ollama · whisper · vault · ws · scheduler · tmux×2 · api)</span>
+      <span style="margin-left:auto">EVERY CONNECTOR PROBED EVERY 60s → connectors.health</span>
+    </div>
+  </div>
+  <div class="scan"></div><div class="vig"></div>
+</div>
+<script src="ui.js"></script>
+<script>
+Sidebar('Connections');
+// 22 segments: 18 live, 2 degraded, 2 offline
+document.getElementById('segs').innerHTML =
+  Array.from({length:22},(_,i)=>{
+    const c = i<18 ? 'var(--ok)' : i<20 ? 'var(--warn)' : 'var(--bad)';
+    return `<i style="background:${c};opacity:.85;box-shadow:0 0 8px ${c}"></i>`;}).join('');
+const C=[
+ ['Attio','AT','#ff7a2f','live',38,'2m','CRM · MCP'],
+ ['Stripe','ST','#2ee06e','live',52,'1m','PAYMENTS · MCP'],
+ ['PayPal','PP','#3f8cff','deg',780,'26m','PAYMENTS · MCP'],
+ ['Square','SQ','#eef4f2','deg',null,'1h','PAYMENTS · RATE-LIMITED'],
+ ['Whop','WH','#a3e635','live',61,'4m','COMMERCE · MCP'],
+ ['PAVA','PV','#22d3ee','live',44,'2m','CONFIRMATIONS · MCP'],
+ ['Slack','SL','#e6b84a','live',29,'40s','COMMS · MCP'],
+ ['Gmail','GM','#ff8a70','live',88,'1m','COMMS · MCP'],
+ ['WhatsApp','WA','#3ce97f','live',102,'3m','COMMS · TOKEN 48H ⚠'],
+ ['ManyChat','MC','#d05cff','live',95,'6m','DM FLOWS · MCP'],
+ ['Notion','NO','#eef4f2','off',null,'2d','DOCS · NO API KEY'],
+ ['GoHighLevel','GH','#ff7a2f','off',null,'9h','CRM · AUTH EXPIRED'],
+];
+const BD={live:'<span class="badge live">● LIVE</span>',deg:'<span class="badge deg">◐ DEGRADED</span>',off:'<span class="badge off">○ OFFLINE</span>'};
+const rnd=mulberry32(5);
+document.getElementById('grid').innerHTML=C.map(([nm,mg,col,st,lat,sync,kind])=>{
+  const ticks=Array.from({length:14},(_,i)=>{
+    const h=5+Math.floor(rnd()*7);
+    let cls='g';
+    if(st==='deg'&&i>9)cls='a'; if(st==='off'&&i>10)cls='r';
+    return `<i class="${cls}" style="height:${h}px"></i>`;}).join('');
+  return `<div class="panel card ${st==='off'?'is-off':''}">
+    <span class="bdg">${BD[st]}</span>
+    <div class="mono" style="border-color:${col};color:${col};box-shadow:0 0 14px ${col}33">${mg}</div>
+    <div class="nm">${nm}</div><div class="kind">${kind}</div>
+    <div class="meta"><span>LATENCY <b class="mono-num">${lat?lat+'ms':'—'}</b></span><span>LAST SYNC <b>${sync}</b></span></div>
+    <div class="up">${ticks}</div>
+    <div class="ft"><span>ENV-KEYED · NO SECRETS IN DB</span><span>TEST ▸</span></div>
+  </div>`;}).join('');
+</script>
+</body></html>

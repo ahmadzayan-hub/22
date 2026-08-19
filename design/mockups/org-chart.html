@@ -1,0 +1,177 @@
+<!doctype html><html><head><meta charset="utf-8"><title>AGENT HIERARCHY</title>
+<link rel="stylesheet" href="base.css">
+<style>
+.title{position:absolute;top:20px;left:0;right:0;text-align:center;z-index:12}
+.title .over{font-size:11px;letter-spacing:.3em;color:var(--dim)}
+.title h1{font-size:36px;font-weight:800;letter-spacing:.22em;text-shadow:0 0 26px rgba(232,241,238,.3)}
+#tree{position:absolute;inset:0;z-index:6}
+.card{position:absolute;border:1px solid var(--line2);background:linear-gradient(rgba(13,19,22,.96),rgba(9,14,16,.96));z-index:10}
+.op{left:690px;top:86px;width:300px;padding:12px 16px;display:flex;gap:13px;align-items:center;
+  border-color:rgba(232,241,238,.4);box-shadow:0 0 30px rgba(232,241,238,.07)}
+.op .av{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--ink);position:relative;flex:none}
+.op .av:before{content:"";position:absolute;left:50%;top:9px;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:var(--ink)}
+.op .av:after{content:"";position:absolute;left:50%;bottom:4px;width:22px;height:11px;margin-left:-11px;border-radius:11px 11px 0 0;background:var(--ink)}
+.op b{font-size:13.5px;letter-spacing:.08em;display:block}
+.op i{font-style:normal;font-size:9px;color:var(--dim);letter-spacing:.14em;display:block;margin-top:3px}
+.op .apr{margin-left:auto;font-size:8.5px;color:var(--warn);border:1px solid rgba(255,176,32,.5);padding:3px 7px;letter-spacing:.08em}
+.cond{left:512px;top:206px;width:656px;padding:0;border-color:rgba(46,224,110,.5);
+  box-shadow:0 0 44px rgba(46,224,110,.12), inset 0 0 30px rgba(46,224,110,.03)}
+.cond .hd{display:flex;align-items:center;gap:12px;padding:13px 18px;border-bottom:1px solid var(--line)}
+.spiral{width:34px;height:34px;border-radius:50%;flex:none;
+  background:conic-gradient(from 40deg,#2ee06e,#0a1013 38%,#2ee06e 55%,#0a1013 92%,#2ee06e);
+  box-shadow:0 0 18px rgba(46,224,110,.45);position:relative}
+.spiral:after{content:"";position:absolute;inset:9px;border-radius:50%;background:#0a1013}
+.cond .hd b{font-size:20px;letter-spacing:.2em}
+.aihead{font-size:8.5px;color:#052515;background:var(--ok);padding:2.5px 7px;font-weight:800;letter-spacing:.16em}
+.cond .hd i{font-style:normal;font-size:9.5px;color:var(--dim);letter-spacing:.06em}
+.cond .hd .live{margin-left:auto;display:flex;align-items:center;gap:7px;font-size:9.5px;color:var(--ok);letter-spacing:.2em}
+.cond .chat{display:flex;gap:10px;padding:13px 18px 11px}
+.cond .in{flex:1;border:1px solid var(--line2);background:var(--inset);padding:10px 13px;font-size:12px;color:var(--dim);display:flex;align-items:center;gap:2px}
+.cond .send{font-size:11px;font-weight:800;letter-spacing:.16em;color:#052515;background:var(--ok);padding:10px 18px;box-shadow:0 0 16px rgba(46,224,110,.4)}
+.cond .tools{display:flex;gap:9px;padding:0 18px 13px}
+.tchip{font-size:9.5px;letter-spacing:.1em;border:1px solid var(--line2);padding:6px 11px;color:var(--ink);background:rgba(7,12,14,.7)}
+.tchip i{font-style:normal;color:var(--faint);margin-left:6px;letter-spacing:.03em}
+.cond .stat{display:flex;gap:20px;padding:9px 18px;border-top:1px solid var(--line);font-size:9.5px;color:var(--dim);letter-spacing:.1em}
+.cond .stat b{color:var(--ink);font-weight:700}
+.side{top:216px;width:322px;padding:0}
+.side .ph{padding:11px 15px 9px}
+.side.l{left:78px;border-color:rgba(255,59,59,.35);box-shadow:0 0 30px rgba(255,59,59,.06)}
+.side.r{right:78px;border-color:rgba(63,140,255,.4);box-shadow:0 0 30px rgba(63,140,255,.07)}
+.side .bd{padding:11px 15px 13px;font-size:10px;color:var(--dim)}
+.kv{display:flex;justify-content:space-between;margin:6px 0;letter-spacing:.05em}
+.kv b{color:var(--ink);font-weight:700}
+.msg{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:9.5px}
+.msg .tx{color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.msg .tm{color:var(--faint)}
+.side .ft{border-top:1px solid var(--line);padding:8px 15px;font-size:9px;letter-spacing:.12em;color:var(--dim);display:flex;justify-content:space-between}
+.crews{position:absolute;left:0;right:0;bottom:26px;display:flex;justify-content:center;gap:13px;z-index:10}
+.crew{width:230px}
+.crew .chd{display:flex;align-items:center;gap:8px;border:1px solid;padding:8px 11px;font-size:11.5px;font-weight:800;letter-spacing:.14em;background:rgba(8,13,15,.9)}
+.crew .chd i{font-style:normal;margin-left:auto;font-size:8.5px;color:var(--dim);font-weight:400;letter-spacing:.05em}
+.crew .cdot{width:8px;height:8px;flex:none}
+.acard{border:1px solid var(--line);border-top:0;background:linear-gradient(rgba(11,16,19,.95),rgba(8,13,15,.95));padding:8px 11px}
+.acard b{font-size:11px;letter-spacing:.04em;display:block}
+.acard i{font-style:normal;font-size:8.5px;color:var(--dim);display:block;margin-top:2.5px;letter-spacing:.02em}
+.acard .tags{display:flex;gap:5px;margin-top:6px;align-items:center;flex-wrap:wrap}
+.mtag{font-size:7.5px;color:var(--faint);border:1px solid var(--line);padding:1.5px 5px;letter-spacing:.06em}
+.btag{font-size:7.5px;color:#0a1013;background:#93a6a0;padding:1.5px 5px;font-weight:800;letter-spacing:.1em}
+.acard.hl{border-left:2px solid var(--sales)}
+.more{border:1px dashed var(--line);border-top:0;padding:6px 11px;font-size:9px;color:var(--faint);letter-spacing:.14em;text-align:center}
+</style></head><body>
+<div class="stage">
+  <div class="gridbg"></div>
+  <div class="topbar">
+    <span class="crumb">// COMMAND &amp; CONTROL</span><span class="spacer"></span>
+    <span class="syschip"><span class="led"></span>6 CREWS · 35 AGENTS</span>
+    <span class="syschip"><span class="led"></span>TMUX 6/6</span>
+    <span class="syschip" style="color:var(--ink)">ALKAHTANI OS · S2</span>
+  </div>
+  <div class="title"><div class="over">// COMMAND &amp; CONTROL</div><h1>AGENT HIERARCHY</h1></div>
+  <svg id="tree" width="1680" height="945"></svg>
+
+  <div class="card op">
+    <span class="av"></span>
+    <span><b>ABDULMOHSEN ALKAHTANI</b><i>OPERATOR · HUMAN IN THE LOOP</i></span>
+    <span class="apr">2 APPROVALS PENDING</span>
+  </div>
+
+  <div class="card cond">
+    <div class="hd">
+      <span class="spiral"></span><b>CONDUCTOR</b><span class="aihead">AI HEAD</span>
+      <i>super agent · grok-4 · xAI API · ctx 256k</i>
+      <span class="live"><span class="led"></span>LIVE</span>
+    </div>
+    <div class="chat">
+      <span class="in">Chat with Conductor — reaches all agents<span class="caret" style="height:13px;width:7px"></span></span>
+      <span class="send">SEND ⏎</span>
+    </div>
+    <div class="tools">
+      <span class="tchip">broadcast<i>msg all crews</i></span>
+      <span class="tchip">openclaw<i>spawn sub-agent</i></span>
+      <span class="tchip">tmux<i>inspect / restart</i></span>
+    </div>
+    <div class="stat"><span><b>6</b> crews</span><span><b>35</b> agents</span><span><b>21</b> runs today</span><span><b>100%</b> success</span><span style="margin-left:auto"><b>next</b> standup 07:00</span></div>
+  </div>
+
+  <div class="card side l panel">
+    <div class="ph" style="color:#ff9c94">▣ G-BRAIN</div>
+    <div class="bd">
+      markdown + pgvector store
+      <div class="kv"><span>nodes</span><b class="mono-num">114</b></div>
+      <div class="kv"><span>chunks embedded</span><b class="mono-num">4,812</b></div>
+      <div class="kv"><span>last ingest</span><b>2m ago · voice</b></div>
+    </div>
+    <div class="ft"><span>OPEN G-BRAIN ▸</span><span style="color:var(--ok)">SYNCED</span></div>
+  </div>
+
+  <div class="card side r panel">
+    <div class="ph" style="color:#8fb8ff">▤ COMMS FEED</div>
+    <div class="bd" style="padding-top:7px">
+      <div class="msg"><span class="ch gm">GM</span><span class="tx">Re: proposal — lock March pricing?</span><span class="tm">2m</span></div>
+      <div class="msg"><span class="ch wa">WA</span><span class="tx">voice note 0:42 → transcribed</span><span class="tm">9m</span></div>
+      <div class="msg"><span class="ch sl">SL</span><span class="tx">#wins · Stripe payout $4.2k cleared</span><span class="tm">14m</span></div>
+      <div class="msg"><span class="ch gm">GM</span><span class="tx">FanBasis invoice #221 paid</span><span class="tm">26m</span></div>
+    </div>
+    <div class="ft"><span>GMAIL + WHATSAPP UNIFIED</span><span style="color:var(--warn)">12 UNREAD</span></div>
+  </div>
+
+  <div class="crews" id="crews"></div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div class="scan"></div><div class="vig"></div>
+</div>
+<script src="ui.js"></script>
+<script>
+const CREWS=[
+ {name:'SALES',c:'#ff7a2f',n:6,agents:[
+   ['Sales Agent','pipeline driver · outreach & follow-ups',['attio','gmail'],true],
+   ['Attio CRM','keeps the CRM clean & synced',['attio'],true],
+   ['Vantage Cohort','runs the vantage deal lane',['gohighlevel'],false]],more:'LAUNCHPAD · NEXO'},
+ {name:'FINANCES',c:'#2ee06e',n:6,agents:[
+   ['Payments Processor','routes invoices & payouts',['stripe','paypal'],true],
+   ['Stripe Tracker','watches charges & churn',['stripe'],true],
+   ['PAVA Confirm','verifies payment confirmations',['pava'],false]],more:'FANBASIS · PULSE'},
+ {name:'CLIENTS',c:'#22d3ee',n:4,agents:[
+   ['Client Roster','single source of client truth',['notion'],true],
+   ['Onboarding Agent','welcome flow & kickoff docs',['gmail','calendar'],true],
+   ['Client Success','health checks & saves',['whatsapp'],false]],more:'RELATIONSHIP'},
+ {name:'MARKETING',c:'#a3e635',n:7,agents:[
+   ['Social Agent','plans & posts across channels',['manychat'],true],
+   ['Arcade Creative','ad & hook concepts',['notion'],false],
+   ['ManyChat MCP','DM flows & captures',['manychat'],true]],more:'ROWOTION · REELA · UGC · GRO'},
+ {name:'TECH',c:'#d05cff',n:6,agents:[
+   ['Data Agent','G-Brain analyst · embeddings QA',['pgvector'],true],
+   ['Stack Monitor','uptime, tokens, health checks',['tmux'],true],
+   ['Model Auditor','evals & drift watch',['ollama'],false]],more:'DOC DRAFTER · SYNTH · CONNECTOR'},
+ {name:'COMMS',c:'#3f8cff',n:5,agents:[
+   ['Comms Agent','crew boss · routes every thread',['gmail','whatsapp'],true],
+   ['Gmail Sorter','labels, triages, drafts replies',['gmail'],true],
+   ['Inbox Triage','priority queue & escalation',['slack'],false]],more:'SLACK · WHATSAPP WORKERS'},
+];
+document.getElementById('crews').innerHTML = CREWS.map(cr=>`
+ <div class="crew" data-c="${cr.c}">
+   <div class="chd" style="border-color:${cr.c}55;color:${cr.c}">
+     <span class="cdot" style="background:${cr.c};box-shadow:0 0 10px ${cr.c}"></span>${cr.name}<i>${cr.n} agents</i></div>
+   ${cr.agents.map(a=>`
+   <div class="acard ${a[3]&&cr.name==='SALES'&&a[0]==='Sales Agent'?'hl':''}">
+     <b>${a[0]}</b><i>${a[1]}</i>
+     <div class="tags"><span class="mtag">grok-4</span>${a[2].map(t=>`<span class="mtag">${t}</span>`).join('')}${a[3]?'<span class="btag">BUILTIN</span>':''}</div>
+   </div>`).join('')}
+   <div class="more">+ ${cr.more}</div>
+ </div>`).join('');
+// connector tree
+const svg=document.getElementById('tree');
+const L=(x1,y1,x2,y2,op)=>svgEl('path',{d:`M${x1},${y1} L${x2},${y2}`,stroke:'rgba(160,200,190,.5)','stroke-width':1,opacity:op??.6,fill:'none'},svg);
+L(840,160,840,206);                 // operator -> conductor
+L(420,290,512,290,.45); L(1168,290,1260,290,.45);   // side panels
+L(840,398,840,470);                 // conductor -> bus
+const cols=document.querySelectorAll('.crew');
+requestAnimationFrame(()=>{
+  const xs=[...cols].map(c=>{const r=c.getBoundingClientRect();return r.left+r.width/2;});
+  const topY=[...cols].map(c=>c.getBoundingClientRect().top);
+  L(Math.min(...xs),470,Math.max(...xs),470);
+  xs.forEach((x,i)=>{ L(x,470,x,topY[i]);
+    svgEl('circle',{cx:x,cy:470,r:2.5,fill:CREWS[i].c},svg); });
+  svgEl('circle',{cx:840,cy:470,r:3.5,fill:'#2ee06e'},svg);
+});
+</script>
+</body></html>

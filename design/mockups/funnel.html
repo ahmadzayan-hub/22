@@ -1,0 +1,85 @@
+<!doctype html><html><head><meta charset="utf-8"><title>FUNNEL</title>
+<link rel="stylesheet" href="base.css">
+<style>
+.wrap{padding:12px 30px 0;display:flex;flex-direction:column;gap:14px}
+.fpanel{padding:16px 22px 18px}
+.fhead{display:flex;align-items:baseline;gap:14px;font-size:10.5px;letter-spacing:.18em;color:var(--dim)}
+.fhead b{color:var(--ink);font-size:12px}
+.fhead .r{margin-left:auto;font-size:9px;color:var(--faint)}
+.stg{display:grid;grid-template-columns:150px 1fr 150px;gap:18px;align-items:center;margin-top:14px}
+.stg .nm{font-size:13px;letter-spacing:.03em}
+.stg .nm i{display:block;font-style:normal;font-size:8.5px;color:var(--faint);letter-spacing:.1em;margin-top:2px}
+.stg .bar{position:relative;height:30px;background:rgba(21,32,25,.55)}
+.stg .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:0 5px 5px 0}
+.stg .bar em{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-style:normal;
+  font-size:10px;font-weight:800;color:#052515;letter-spacing:.06em}
+.stg .v{text-align:right}
+.stg .v b{font-size:21px;font-weight:800}
+.stg .v span{font-size:10px;color:var(--faint);margin-left:8px}
+.carry{margin:3px 0 3px 168px;font-size:9px;color:var(--faint);letter-spacing:.1em}
+.carry b{color:#79d6a2;font-weight:700}
+.jhead{display:flex;align-items:baseline;gap:12px;padding:2px 4px;font-size:10.5px;letter-spacing:.2em;color:var(--dim)}
+.jrow{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+.jcard{padding:12px 14px}
+.jcard .top{display:flex;align-items:center;gap:8px}
+.jcard .top b{font-size:11.5px;letter-spacing:.02em;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.jstage{font-size:7.5px;font-weight:800;letter-spacing:.12em;padding:2.5px 6px;border:1px solid;flex:none}
+.jcard .src{font-size:8.5px;color:var(--faint);margin-top:5px;letter-spacing:.05em}
+.jcard .ag{display:flex;align-items:center;gap:7px;margin-top:9px;padding-top:8px;border-top:1px solid var(--line);font-size:8.5px;color:var(--dim);letter-spacing:.06em}
+.jcard .ag .dot{width:6px;height:6px;border-radius:50%}
+.jcard .tm{margin-left:auto;color:var(--faint)}
+.jcard.ghost{border-style:dashed;display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:var(--faint);letter-spacing:.16em;background:transparent}
+</style></head><body>
+<div class="stage">
+  <div class="gridbg"></div>
+  <div id="sidebar"></div>
+  <div class="main">
+    <div class="pagehead">
+      <div><div class="over">// JOURNEYS</div><h1>FUNNEL</h1></div>
+      <span class="spacer"></span>
+      <span class="chip active" style="align-self:center">34 JOURNEYS</span>
+      <span class="chip dim" style="align-self:center">1 ARCHIVED</span>
+      <span class="chip dim" style="align-self:center">WINDOW: 30D</span>
+    </div>
+    <div class="wrap">
+      <div class="panel fpanel">
+        <div class="fhead"><b>STAGE CASCADE</b> REACHED-STAGE COUNTS<span class="r">FED FROM journeys · LIVE</span></div>
+        <div id="stages"></div>
+      </div>
+      <div class="jhead">ACTIVE JOURNEYS — NEWEST MOVEMENT FIRST</div>
+      <div class="jrow" id="cards"></div>
+    </div>
+  </div>
+  <div class="scan"></div><div class="vig"></div>
+</div>
+<script src="ui.js"></script>
+<script>
+Sidebar('Funnel');
+const S=[['First touch',34,null,'all inbound, 30d'],['Engaged',28,82,'replied or clicked'],
+ ['Nurtured',20,71,'in a sequence'],['Opted in',15,75,'booked or subscribed'],['Converted',7,47,'closed-won']];
+document.getElementById('stages').innerHTML=S.map(([n,v,c,d],i)=>{
+  const pct=Math.round(v/34*100), a=(.95-i*.14).toFixed(2);
+  return `${c?`<div class="carry">↳ <b>${c}%</b> CARRY FROM PREVIOUS STAGE</div>`:''}
+  <div class="stg"><span class="nm">${n}<i>${d.toUpperCase()}</i></span>
+   <span class="bar"><i style="width:${pct}%;background:rgba(46,224,110,${a});box-shadow:0 0 14px rgba(46,224,110,.35)"></i><em>${pct}%</em></span>
+   <span class="v mono-num"><b>${v}</b><span>journeys</span></span></div>`;}).join('');
+const STC={['Engaged']:'#a3e635',['Nurtured']:'#22d3ee',['Opted in']:'#3f8cff',['Converted']:'#2ee06e',['First touch']:'#93a6a0'};
+const CARDS=[
+ ['Marcus Kane','Converted','newsletter → call','Sales Agent','#ff7a2f','2h'],
+ ['Lina · Vantage','Opted in','vantage referral','Vantage Cohort','#ff7a2f','5h'],
+ ['Omar · Launchpad','Nurtured','IG campaign DM','Nexo Launchpad','#ff7a2f','7h'],
+ ['Dana R.','Engaged','newsletter reply','ManyChat MCP','#a3e635','1d'],
+ ['Client · Roster #12','Converted','client referral','Client Success','#22d3ee','2d'],
+ ['@fit.creator','First touch','tiktok comment','Social Agent','#a3e635','2d'],
+ ['Hana M.','Nurtured','manychat flow','ManyChat MCP','#a3e635','3d'],
+ ['Beta list #4','Engaged','email sequence','Nexo Launchpad','#ff7a2f','3d'],
+];
+document.getElementById('cards').innerHTML=CARDS.map(([n,st,src,ag,c,tm])=>`
+ <div class="panel jcard">
+   <div class="top"><b>${n}</b><span class="jstage" style="color:${STC[st]};border-color:${STC[st]}77">${st.toUpperCase()}</span></div>
+   <div class="src">SOURCE: ${src.toUpperCase()}</div>
+   <div class="ag"><span class="dot" style="background:${c};box-shadow:0 0 7px ${c}"></span>${ag.toUpperCase()}<span class="tm">moved ${tm} ago</span></div>
+ </div>`).join('')+`<div class="panel jcard ghost">+ 30 MORE JOURNEYS ▸</div>`;
+</script>
+</body></html>

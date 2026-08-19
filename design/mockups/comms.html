@@ -1,0 +1,154 @@
+<!doctype html><html><head><meta charset="utf-8"><title>COMMS FEED</title>
+<link rel="stylesheet" href="base.css">
+<style>
+.filters{display:flex;gap:8px;padding:10px 34px 0}
+.cols{display:grid;grid-template-columns:1.55fr 1fr;gap:14px;padding:14px 30px 0}
+.list{padding:0}
+.mrow{display:flex;align-items:center;gap:12px;padding:11.5px 16px;border-bottom:1px solid var(--line);position:relative}
+.mrow:last-child{border-bottom:0}
+.mrow .und{width:6px;height:6px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok);flex:none}
+.mrow .und.read{background:#27332f;box-shadow:none}
+.mrow .who{width:196px;flex:none}
+.mrow .who b{font-size:11.5px;letter-spacing:.02em;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mrow .who i{font-style:normal;font-size:8.5px;color:var(--faint);letter-spacing:.06em}
+.mrow .snip{flex:1;font-size:10.5px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:.01em}
+.mrow .hb{font-size:8px;letter-spacing:.1em;color:var(--ink);border:1px solid var(--line2);padding:2.5px 7px;background:rgba(7,12,14,.7);flex:none}
+.mrow .tm{font-size:9px;color:var(--faint);width:44px;text-align:right;flex:none}
+.mrow.sel{background:linear-gradient(90deg,rgba(63,140,255,.10),transparent 80%);border-left:2px solid var(--comms)}
+.draft .qt{margin:11px 15px 0;border-left:2px solid var(--line2);padding:7px 11px;font-size:10px;color:var(--dim);background:rgba(7,12,14,.6)}
+.draft .qt b{color:var(--ink)}
+.draft .body{margin:11px 15px;border:1px solid rgba(63,140,255,.35);background:rgba(7,12,16,.7);padding:12px 14px;font-size:11px;line-height:1.75;color:#dce9e5;box-shadow:inset 0 0 24px rgba(63,140,255,.05)}
+.draft .body .sig{color:var(--dim)}
+.meta-row{display:flex;gap:7px;margin:0 15px 11px;flex-wrap:wrap}
+.mchip{font-size:8.5px;letter-spacing:.08em;color:var(--dim);border:1px solid var(--line);padding:3px 8px}
+.mchip b{color:#79d6a2;font-weight:700}
+.actions{display:flex;gap:9px;margin:0 15px 13px}
+.note{margin:0 15px 13px;font-size:9px;color:var(--faint);letter-spacing:.05em}
+.statusbar{position:absolute;left:30px;right:30px;bottom:24px;margin:0;border:1px solid var(--line);background:rgba(8,13,15,.85);
+  display:flex;align-items:center;gap:26px;padding:10px 18px;font-size:10.5px;letter-spacing:.1em;color:var(--dim)}
+.statusbar b{color:var(--ink);font-weight:700}
+.statusbar .warn{color:var(--warn)}
+.statusbar .bar{flex:1;height:6px;background:#152019;position:relative}
+.statusbar .bar i{position:absolute;left:0;top:0;bottom:0;width:98%;background:var(--ok);border-radius:0 3px 3px 0;box-shadow:0 0 10px rgba(46,224,110,.5)}
+</style></head><body>
+<div class="stage">
+  <div class="gridbg"></div>
+  <div id="sidebar"></div>
+  <div class="main">
+    <div class="pagehead">
+      <div><div class="over">// UNIFIED INBOX</div><h1>COMMS FEED</h1></div>
+      <span class="spacer"></span>
+      <span class="syschip" style="align-self:center"><span class="led"></span>GMAIL</span>
+      <span class="syschip" style="align-self:center"><span class="led"></span>SLACK</span>
+      <span class="syschip" style="align-self:center"><span class="led warn"></span>WHATSAPP · TOKEN 48H</span>
+    </div>
+    <div class="filters">
+      <span class="chip active">ALL · 342</span><span class="chip dim">GMAIL 128</span><span class="chip dim">WHATSAPP 141</span>
+      <span class="chip dim">SLACK 73</span><span class="chip" style="color:var(--warn);border-color:rgba(255,176,32,.5)">UNHANDLED 12</span>
+    </div>
+    <div class="cols">
+      <div class="panel list">
+        <div class="ph">INBOX — NEWEST FIRST</div>
+        <div class="mrow">
+          <span class="und"></span><span class="ch gm">GMAIL</span>
+          <span class="who"><b>Marcus Kane</b><i>RE: PROPOSAL</i></span>
+          <span class="snip">can we lock the March cohort pricing before Friday?</span>
+          <span class="hb">GMAIL SORTER</span><span class="tm">2m</span>
+        </div>
+        <div class="mrow sel">
+          <span class="und"></span><span class="ch wa">WHATSAPP</span>
+          <span class="who"><b>Omar · Launchpad</b><i>DIRECT</i></span>
+          <span class="snip">can we move tomorrow's call to 4pm?</span>
+          <span class="hb">COMMS AGENT</span><span class="tm">7m</span>
+        </div>
+        <div class="mrow">
+          <span class="und read"></span><span class="ch wa">WHATSAPP</span>
+          <span class="who"><b>Lina · Vantage</b><i>VOICE NOTE 0:42</i></span>
+          <span class="snip">transcribed → G-Brain · "budget approved, start the pilot…"</span>
+          <span class="hb">WHATSAPP WORKER</span><span class="tm">9m</span>
+        </div>
+        <div class="mrow">
+          <span class="und read"></span><span class="ch sl">SLACK</span>
+          <span class="who"><b>#wins</b><i>CHANNEL</i></span>
+          <span class="snip">Stripe payout $4.2k cleared — posted by payments-pulse</span>
+          <span class="hb">SLACK WORKER</span><span class="tm">14m</span>
+        </div>
+        <div class="mrow">
+          <span class="und read"></span><span class="ch gm">GMAIL</span>
+          <span class="who"><b>FanBasis</b><i>BILLING</i></span>
+          <span class="snip">invoice #221 paid — receipt attached · logged to finances</span>
+          <span class="hb">GMAIL SORTER</span><span class="tm">26m</span>
+        </div>
+        <div class="mrow">
+          <span class="und"></span><span class="ch sl">SLACK</span>
+          <span class="who"><b>#ops</b><i>STACK-MONITOR</i></span>
+          <span class="snip">whatsapp token expires in 48h — reauth task opened</span>
+          <span class="hb">INBOX TRIAGE</span><span class="tm">1h</span>
+        </div>
+        <div class="mrow">
+          <span class="und read"></span><span class="ch gm">GMAIL</span>
+          <span class="who"><b>Dana R.</b><i>NEW LEAD</i></span>
+          <span class="snip">vantage referral — intro'd via newsletter reply</span>
+          <span class="hb">INBOX TRIAGE</span><span class="tm">2h</span>
+        </div>
+        <div class="mrow">
+          <span class="und read"></span><span class="ch wa">WHATSAPP</span>
+          <span class="who"><b>Client · Roster #12</b><i>CHECK-IN</i></span>
+          <span class="snip">all good this week — send the recap on Friday</span>
+          <span class="hb">COMMS AGENT</span><span class="tm">3h</span>
+        </div>
+        <div class="mrow">
+          <span class="und read"></span><span class="ch gm">GMAIL</span>
+          <span class="who"><b>Calendly</b><i>BOOKINGS</i></span>
+          <span class="snip">3 discovery calls confirmed for Thursday · calendar synced</span>
+          <span class="hb">INBOX TRIAGE</span><span class="tm">4h</span>
+        </div>
+        <div class="mrow">
+          <span class="und read"></span><span class="ch sl">SLACK</span>
+          <span class="who"><b>#launch</b><i>DIGEST</i></span>
+          <span class="snip">daily digest ready — 6 items · posted by slack-worker</span>
+          <span class="hb">SLACK WORKER</span><span class="tm">5h</span>
+        </div>
+      </div>
+      <div class="panel draft">
+        <div class="ph" style="color:#8fb8ff">✎ AI DRAFT — PENDING APPROVAL</div>
+        <div class="qt"><b>Omar · Launchpad</b> — "can we move tomorrow's call to 4pm?"</div>
+        <div class="body">
+          Hi Omar — 4pm works on our side. I've moved tomorrow's call to
+          <b>16:00–16:30 GST</b> and updated the invite; the new link is attached
+          to the event.<br><span class="sig">— Abdulmohsen · sent via ALKAHTANI OS</span>
+        </div>
+        <div class="meta-row">
+          <span class="mchip">INTENT: <b>RESCHEDULE</b></span>
+          <span class="mchip">CALENDAR HOLD: <b>CREATED</b></span>
+          <span class="mchip">CONFIDENCE: <b>0.94</b></span>
+          <span class="mchip">TONE: <b>FRIENDLY</b></span>
+        </div>
+        <div class="actions">
+          <span class="btn go">✓ APPROVE</span>
+          <span class="btn">✎ EDIT</span>
+          <span class="btn blue">SEND ▸</span>
+        </div>
+        <div class="note">operator approval required — outbound send is a gated action</div>
+        <div class="ph" style="border-top:1px solid var(--line);color:var(--dim)">AUDIT TRAIL</div>
+        <div style="padding:9px 15px 13px;font-size:9px;color:var(--dim);letter-spacing:.05em;line-height:2.1">
+          <div>19:58:12 · received via <b style="color:var(--ink)">whatsapp-worker</b></div>
+          <div>19:58:14 · triaged → intent <b style="color:var(--ink)">reschedule</b> · priority P2</div>
+          <div>19:58:19 · calendar hold created · <b style="color:var(--ink)">16:00–16:30 GST</b></div>
+          <div>19:58:22 · draft v2 by <b style="color:var(--ink)">comms-agent</b> · persona: operator mode</div>
+          <div style="color:var(--warn)">19:58:23 · waiting for operator approval…</div>
+        </div>
+      </div>
+    </div>
+    <div class="statusbar">
+      <span><b class="mono-num">342</b> MESSAGES</span>
+      <span class="bar"><i></i></span>
+      <span><b class="mono-num">98%</b> AUTO-TRIAGED</span>
+      <span class="warn">⚠ 3 UNREAD &gt; 24H</span>
+    </div>
+  </div>
+  <div class="scan"></div><div class="vig"></div>
+</div>
+<script src="ui.js"></script>
+<script>Sidebar('Comms');</script>
+</body></html>

@@ -1,0 +1,9 @@
+{
+  "name": "alkahtani-os",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "seed": "python3 scripts/generate_vault_and_seed.py",
+    "mockups": "cd design/mockups && node shot.mjs"
+  }
+}
