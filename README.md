@@ -41,13 +41,17 @@ curl -H "$H" -X POST -H "Content-Type: application/json" \
 curl -H "$H" localhost:8080/api/v1/gbrain/stats
 open http://localhost:3000/g-brain
 
-# smoke (M3-M5 gates, once the api is up)
+# smoke (M3-M6 gates, once the api is up)
 bash scripts/smoke/m3.sh
 bash scripts/smoke/m4.sh
 bash scripts/smoke/m5.sh
+bash scripts/smoke/m6.sh
 open http://localhost:3000/dashboard
 open http://localhost:3000/funnel
 open http://localhost:3000/tasks
+
+# backups — run on a schedule (cron / k8s CronJob); dumps to $BACKUP_DIR, prunes to $BACKUP_RETAIN
+bash scripts/backup_db.sh
 ```
 
 ## Milestones
@@ -59,7 +63,7 @@ open http://localhost:3000/tasks
 | M3 | Runtime: vault loader, scheduler, run log, tmux crews, Conductor loop | **code in repo** — `bash scripts/smoke/m3.sh` |
 | M4 | Crews + MCP connector modules w/ health probes | **code in repo** — `bash scripts/smoke/m4.sh` |
 | M5 | Dashboard / funnel / task board APIs + UI | **code in repo** — `bash scripts/smoke/m5.sh` |
-| M6 | Hardening: alerts, nightly self-report, backups, docs | pending |
+| M6 | Hardening: alerts, nightly self-report, backups, docs | **code in repo** — `bash scripts/smoke/m6.sh` |
 
 ## Design
 

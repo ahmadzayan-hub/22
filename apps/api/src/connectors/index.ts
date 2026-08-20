@@ -1,5 +1,6 @@
 import { db } from "../db.js";
 import { CONNECTOR_PROBES } from "./probes.js";
+import { raiseIncident } from "../services/alerts.js";
 import type { ProbeResult } from "./types.js";
 
 export { CONNECTOR_PROBES } from "./probes.js";
@@ -8,7 +9,7 @@ export async function runProbe(slug: string): Promise<ProbeResult & { slug: stri
   const probe = CONNECTOR_PROBES[slug];
   if (!probe) throw new Error(`no probe registered for connector "${slug}"`);
 
-  const prior = (await db.query(`select status from connectors where slug=$1`, [slug])).rows[0];
+  const prior = (await db.query(`select id, status from connectors where slug=$1`, [slug])).rows[0];
   const r = await probe();
 
   await db.query(
@@ -18,10 +19,10 @@ export async function runProbe(slug: string): Promise<ProbeResult & { slug: stri
     [slug, r.status, r.latency_ms, r.detail]);
 
   if (prior && prior.status !== r.status && r.status !== "live") {
-    await db.query(
-      `insert into incidents (connector_id, severity, message)
-       values ((select id from connectors where slug=$1), $2, $3)`,
-      [slug, r.status === "offline" ? 2 : 1, `${slug}: ${prior.status} -> ${r.status} (${r.detail})`]);
+    await raiseIncident({
+      connectorId: prior.id, severity: r.status === "offline" ? 2 : 1,
+      message: `${slug}: ${prior.status} -> ${r.status} (${r.detail})`,
+    });
   }
 
   return { slug, ...r };

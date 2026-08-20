@@ -7,6 +7,7 @@ import { connectorRoutes } from "./routes/connectors.js";
 import { dashboardRoutes } from "./routes/dashboard.js";
 import { funnelRoutes } from "./routes/funnel.js";
 import { taskRoutes } from "./routes/tasks.js";
+import { alertRoutes } from "./routes/alerts.js";
 import { syncVault } from "./runtime/vault.js";
 import { startScheduler } from "./runtime/scheduler.js";
 import { ensureSessions } from "./runtime/tmux.js";
@@ -22,6 +23,7 @@ app.register(connectorRoutes, { prefix: "/api/v1/connectors" });
 app.register(dashboardRoutes, { prefix: "/api/v1/dashboard" });
 app.register(funnelRoutes, { prefix: "/api/v1/funnel" });
 app.register(taskRoutes, { prefix: "/api/v1/tasks" });
+app.register(alertRoutes, { prefix: "/api/v1/alerts" });
 
 // boot: vault → agents table, tmux crews, cron scheduler (each degrades gracefully)
 (async () => {
