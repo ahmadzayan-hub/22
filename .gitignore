@@ -1,5 +1,8 @@
 node_modules/
 .next/
+out/
 .env
 *.log
 __pycache__/
+*.tsbuildinfo
+/backups/

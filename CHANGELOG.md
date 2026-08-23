@@ -1,5 +1,45 @@
 # Changelog
 
+## 2026-08-20 — M6: Hardening — alerts, standup visibility, backups, docs
+- **Alerts** (`services/alerts.ts`): a single `raiseIncident()` writes to
+  `incidents` and, if `ALERT_WEBHOOK_URL` is set, best-effort POSTs a
+  Slack/Discord-style webhook (unset → DB-only, never blocks the caller).
+  Wired into both incident sources: agent run failures (`runtime/runner.ts`
+  now raises one on catch, previously silent beyond `agent_runs.error`) and
+  connector status drops (`connectors/index.ts`, refactored to use the same
+  helper instead of its own inline insert).
+- Routes: `GET /api/v1/alerts?resolved=` (list, joins agent/connector slugs),
+  `PATCH /api/v1/alerts/{id}/resolve`. `GET /api/v1/conductor/standup/latest`
+  surfaces the nightly Conductor standup banner (already scheduled at 07:00
+  since M3) without re-running it.
+- **Backups**: `scripts/backup_db.sh` — `pg_dump` to `$BACKUP_DIR`, gzipped,
+  timestamped, prunes down to `$BACKUP_RETAIN` (default 14). Meant to run on
+  a host cron / CronJob, not a new long-running service.
+- **Docs**: `docs/API.md` rewritten to document the API as actually built
+  (previous version was the pre-M1 aspirational contract) — implemented
+  routes vs. what's still planned (Comms reply flow, Workflows/Personas
+  CRUD, an approvals list/decide endpoint, any WS transport) called out
+  explicitly rather than left ambiguous.
+- Verified `GET /api/v1/alerts` query directly against the live seeded
+  Supabase instance. Gate: `scripts/smoke/m6.sh`.
+
+## 2026-08-19 — M5: Dashboard / Funnel / Tasks — live APIs + UI
+- **API**: `GET /api/v1/dashboard/summary` (pipeline open/stalled, closed-won,
+  monthly MRR from the latest `kpi_daily` snapshot, funnel reached-stage
+  cascade, workforce live/total per department, task counts) —
+  `GET|POST /api/v1/funnel*` (stage cascade with carry %, active journeys) —
+  `GET|POST|PATCH /api/v1/tasks*` (board with counts, create, state moves).
+  Reached-stage cascade is computed from `journeys.stage` (a journey at
+  `converted` implicitly passed every earlier stage), which reproduces the
+  seed's 34→28→20→15→7 numbers exactly rather than hardcoding them.
+- Run-success/runs-today prefers live `agent_runs` for the current day and
+  only falls back to the `kpi_daily` snapshot when nothing has run yet today
+  — real activity always wins over the seeded demo numbers.
+- **Web**: `/dashboard`, `/funnel`, `/tasks` pages (Next.js + Tailwind,
+  matching the mockups' layout and dept palette) — Tasks includes an add box
+  and one-click column moves wired to the new endpoints.
+- Gate: `scripts/smoke/m5.sh`.
+
 ## 2026-08-18 — M4: MCP connector health probes
 - **`connectors/`**: one real HTTP probe per named MCP connector — Attio, Stripe,
   PayPal, Square, Whop, Slack, Gmail, WhatsApp, ManyChat, Notion, GoHighLevel hit

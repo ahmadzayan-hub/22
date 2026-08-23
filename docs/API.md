@@ -1,36 +1,46 @@
 # ALKAHTANI OS — API Contract (`/api/v1`, bearer auth)
 
-Agent→tool calls go via MCP, not REST. WS events at `/ws`.
-Implemented so far: **Auth (token check), System, G-Brain** (M1–M2). The rest land with M3–M5.
+`Authorization: Bearer $OPERATOR_TOKEN` on every route below except `GET /health`.
+No WebSocket transport exists yet — pages poll REST on mount (see `apps/web/app/*/page.tsx`).
 
-| Module | Method + Path | Purpose | Caller |
-|---|---|---|---|
-| Auth | `POST /auth/login` · `GET /auth/me` | operator session | UI |
-| G-Brain | `POST /gbrain/ingest` | text / voice / upload → md + embed + edges | UI+Agent |
-| | `GET /gbrain/graph?view=radial\|neural` | full graph payload (S1) | UI |
-| | `GET /gbrain/depts/{slug}/subgraph` | expanded crew view (S4) | UI |
-| | `POST /gbrain/search` `{query,k,dept?}` | hybrid vector+keyword | UI+Agent |
-| | `GET /gbrain/stats` | "114 NODES" counters | UI |
-| Agents | `GET /agents` · `GET /agents/{id}` | roster + status + last run | UI |
-| | `POST /agents` | create from identity md (status=disabled) | UI |
-| | `GET/PUT /agents/{id}/identity` | raw markdown (PUT → `rule_change` approval if live) | UI |
-| | `PATCH /agents/{id}/status` | enable needs `agent_enable` approval | UI |
-| | `POST /agents/{id}/run` · `GET /agents/{id}/runs` | ad-hoc trigger / history | UI+Agent |
-| Conductor | `POST /conductor/chat` | "reaches all agents" (streams over WS) | UI |
-| | `POST /conductor/broadcast` · `POST /conductor/spawn` | broadcast / openclaw | Agent |
-| | `GET /conductor/tmux` · `POST /conductor/tmux/{crew}/restart` | supervise / self-heal | Agent |
-| Org | `GET /org/chart` · `GET /org/crews` | hierarchy tree (S2) | UI |
-| Dashboard | `GET /dashboard/summary` · `/funnel` · `/workforce` · `/taskboard` | S3 cards | UI |
-| Tasks | `GET/POST /tasks` · `PATCH/DELETE /tasks/{id}` | board CRUD | UI+Agent |
-| Pipeline | `GET /deals?stalled=` · `PATCH /deals/{id}` · `GET /journeys` · `POST /journeys/{id}/advance` | funnel/deals | UI+Agent |
-| Comms | `GET /comms/messages?channel=&state=` · `GET /comms/messages/{id}` | unified inbox | UI |
-| | `POST .../approve` · `.../edit` · `.../reject` | human-in-the-loop reply flow | UI |
-| | `GET /comms/stats` | "342 msgs – 98% auto-triaged" | UI |
-| Connections | `GET /connectors` · `GET /connectors/summary` · `POST /connectors/{id}/probe` · `PATCH /connectors/{id}` | MCP registry + health (S9) | UI+Agent |
-| Workflows | `GET/POST /workflows` · `POST /workflows/{id}/run` · `GET /workflows/{id}/runs` | automation canvas | UI |
-| Personas | `GET/POST /personas` · `PATCH /personas/{id}` | variants + toggles | UI |
-| Approvals | `GET /approvals?state=pending` · `POST /approvals/{id}/decide` | operator gate | UI |
-| System | `GET /system/status` ("n/N live") · `GET /system/kpi` · `POST /system/backup` | ops | UI |
+## Implemented (M1–M6)
 
-**WS `/ws` events:** `run.finished`, `agent.status_changed`, `connector.status_changed`,
-`message.received`, `task.updated`, `approval.requested`, `conductor.stream`, `dashboard.tick`.
+| Module | Method + Path | Purpose |
+|---|---|---|
+| System | `GET /health` | liveness, no auth |
+| | `GET /system/status` | connector/agent live counts + active LLM provider |
+| G-Brain | `POST /gbrain/ingest` | text / voice / upload → md + embed + graph edges |
+| | `GET /gbrain/graph?view=radial\|neural` | full graph payload (S1) |
+| | `GET /gbrain/depts/{slug}/subgraph` | expanded crew view (S1.2) |
+| | `POST /gbrain/search` `{query,k}` | hybrid vector + keyword search |
+| | `GET /gbrain/stats` | node counts by type |
+| Agents | `GET /agents` · `GET /agents/{slug}` | roster + status + last run / run history |
+| | `POST /agents/{slug}/run` `{trigger,context}` | ad-hoc or shadow run |
+| | `PATCH /agents/{slug}` `{status}` | disabled/shadow/live/degraded — live opens an `agent_enable` approval if not already approved |
+| | `POST /agents/sync` | re-sync `agents` from `vault/agents/*.md` |
+| Conductor | `POST /conductor/chat` `{message}` | operator chat, may create tasks |
+| | `POST /conductor/broadcast` `{message}` | one inbox task per crew |
+| | `POST /conductor/spawn` `{mission}` | openclaw ad-hoc shadow sub-agent |
+| | `POST /conductor/standup` | run the daily standup now |
+| | `GET /conductor/standup/latest` | most recent standup banner (from `kpi_daily`) |
+| | `GET /conductor/runs?agent=&limit=` | agent_runs history |
+| | `GET /conductor/tmux` · `POST /conductor/tmux/ensure` · `POST /conductor/tmux/{crew}/restart` | crew session supervision |
+| Connectors | `GET /connectors` | registry + live status/latency/health |
+| | `POST /connectors/{slug}/check` | probe one connector now |
+| | `POST /connectors/check-all` | probe all 12 named connectors now |
+| Dashboard | `GET /dashboard/summary` | pipeline, closed-won, MRR, funnel cascade, workforce, task counts (S3) |
+| Funnel | `GET /funnel` | reached-stage cascade + carry % (S7) |
+| | `GET /funnel/journeys?limit=` | active journeys, newest movement first |
+| Tasks | `GET /tasks` | board + per-state counts |
+| | `POST /tasks` `{title,body?,dept?,priority?,due_at?}` | create |
+| | `PATCH /tasks/{id}` `{state}` | move between open/doing/done/blocked |
+| Alerts | `GET /alerts?resolved=false\|true\|all&limit=` | incidents (agent-run failures, connector status drops) |
+| | `PATCH /alerts/{id}/resolve` | mark an incident resolved |
+
+## Planned, not yet built
+
+Org chart (S2 is served from `/gbrain/graph` client-side), Comms inbox + approve/edit/reject
+reply flow (S6), Workflows CRUD + run history (S8), Personas CRUD (S10), a general
+`/approvals` list+decide endpoint (approvals are created inline by the routes above; there's
+no listing/decision endpoint yet), and any WebSocket/live-push transport — today's pages
+poll on mount and don't auto-refresh.

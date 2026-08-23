@@ -1,6 +1,7 @@
 import { db } from "../db.js";
 import { embed, llmJson } from "../services/ollama.js";
 import { writeNote } from "../services/markdown.js";
+import { raiseIncident } from "../services/alerts.js";
 import { identityFor } from "./vault.js";
 
 type RunPlan = {
@@ -67,9 +68,11 @@ Reply as JSON: {"brief_md": string, "tasks_to_create": [{"title","crew"}], "need
     return { run_id: run.id, success: true, tasks: (plan.tasks_to_create ?? []).length,
              approvals: (plan.needs_approval ?? []).length, vault: rel };
   } catch (e: any) {
+    const error = String(e?.message ?? e);
     await db.query(
       `update agent_runs set finished_at=now(), success=false, error=$2 where id=$1`,
-      [run.id, String(e?.message ?? e).slice(0, 500)]);
-    return { run_id: run.id, success: false, error: String(e?.message ?? e) };
+      [run.id, error.slice(0, 500)]);
+    await raiseIncident({ agentId: row.id, severity: 2, message: `${slug} run failed: ${error}` });
+    return { run_id: run.id, success: false, error };
   }
 }

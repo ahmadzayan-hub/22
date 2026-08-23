@@ -11,6 +11,11 @@ export async function conductorRoutes(app: FastifyInstance) {
   app.post("/broadcast", async (req) => broadcast(String((req.body as any)?.message ?? "")));
   app.post("/spawn", async (req) => openclaw(String((req.body as any)?.mission ?? "")));
   app.post("/standup", async () => runStandup());
+  app.get("/standup/latest", async () => {
+    const row = (await db.query(
+      `select day, snapshot->'banner' banner from kpi_daily order by day desc limit 1`)).rows[0];
+    return row ?? { day: null, banner: [] };
+  });
 
   app.get("/tmux", async () => listSessions());
   app.post("/tmux/ensure", async () => ensureSessions());
